@@ -9,5 +9,7 @@
 #include <vector>
 template <class T>
 T median(std::vector<T>) ;
+template <class In, class T>
+T median(In, In, T) ;
 #include "median.cpp"
 #endif

@@ -106,10 +106,13 @@ void report_median(const std::vector<double>& hw) {
 	
 	// complains if student did no homework
 	is_empty(hw) ;
+	std::vector<double>::const_iterator b = hw.begin() ;
+	std::vector<double>::const_iterator e = hw.end() ;
+	double d = 0 ; /* dummy argument */
 
 	std::streamsize prec = std::cout.precision() ;
         std::cout << "your homework grade via the median is: "
-                << std::setprecision(3) << median(hw)
+                << std::setprecision(3) << median(b, e, d)
                 << std::setprecision(prec) << std::endl ;
 
 	return ;
