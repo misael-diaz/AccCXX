@@ -42,8 +42,8 @@ T median(In begin, In end, T dummy) {
 	// the compiler can deduce the type of the data pointed to by the
 	// iterators from the type of the dummy argument.
 
-	std::vector<T> vector(begin, end) ; /* copies into vector */
-        const typename std::vector<T>::size_type size = vector.size() ;
+	std::vector<T> v(begin, end) ; /* copies into vector */
+        const typename std::vector<T>::size_type size = v.size() ;
         const typename std::vector<T>::size_type mid = size / 2 ;
 
         // finds the median of vector
@@ -53,9 +53,9 @@ T median(In begin, In end, T dummy) {
         }
 
         // sorts vector and finds the middle value
-        std::sort(vector.begin(), vector.end()) ;
+        std::sort(v.begin(), v.end()) ;
 
-        return (size % 2) == 0 ? (vector[mid] + vector[mid - 1])/2 :
-                vector[mid] ;
+        dummy = ( (size % 2) == 0 ? (v[mid] + v[mid - 1]) / 2 : v[mid] ) ;
+	return dummy ;
 }
 
