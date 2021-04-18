@@ -3,7 +3,7 @@
         !
         ! Synopsis:
         ! Basic linked-list implementation. Values can be inserted at
-        ! the back or anywhere else in the list.
+        ! the back, front, or anywhere else in the list.
         !
         ! References:
         ! SJ Chapman, FORTRAN for scientists and engineers, 4th edition
@@ -114,13 +114,15 @@
                 implicit none
 
                 interface insert
-                        module procedure inserter, insert_at_position
+                        procedure insert_at_position
                 end interface
 
                 private
                 public node
                 public nullifies
                 public insert
+                public front_inserter
+                public back_inserter
                 public display
                 public free
 
@@ -151,6 +153,19 @@
                         integer(kind=int32), intent(in) :: val
 
                         call create_node(tail, val)
+                end subroutine
+
+                subroutine insert_front(head, val)
+                        ! inserts at the front (begin) of the linked-list
+                        type(node), pointer, intent(inout) :: head
+                        type(node), pointer :: it => null()
+                        integer(kind=int32), intent(in) :: val
+
+                        ! creates a new head node
+                        it => head
+                        head => null()
+                        call create_node(head, val)
+                        head % next => it       ! links new to old head
                 end subroutine
 
                 subroutine insert_at_position(head, tail, pos, val)
@@ -185,7 +200,7 @@
                         
                 end subroutine
                 
-                subroutine inserter(head, tail, val)
+                subroutine back_inserter(head, tail, val)
                         ! inserts node to linked-list, it either
                         ! initializes the linked-list or inserts
                         ! a node at the back (end).
@@ -197,6 +212,22 @@
                                 call initialize(head, tail, val)
                         else
                                 call insert_back(tail, val)
+                        end if
+
+                end subroutine
+
+                subroutine front_inserter(head, tail, val)
+                        ! inserts node to linked-list, it either
+                        ! initializes the linked-list or inserts
+                        ! a node at the front (begin).
+                        type(node), pointer, intent(inout) :: head
+                        type(node), pointer, intent(inout) :: tail
+                        integer(kind=int32), intent(in) :: val
+
+                        if ( .not. associated(head) ) then
+                                call initialize(head, tail, val)
+                        else
+                                call insert_front(head, val)
                         end if
 
                 end subroutine
@@ -293,7 +324,7 @@
                 call nullifies(head, tail)
                 do k = 0, 7
                         ! builds linked-list
-                        call insert(head, tail, k)
+                        call front_inserter(head, tail, k)
                 end do
                 call display(head)      ! displays linked-list
                 write (*, *)
