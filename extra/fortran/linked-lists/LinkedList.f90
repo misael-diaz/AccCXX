@@ -29,7 +29,7 @@
                 public
                 
                 contains
-                subroutine dispAllocFailMsg(mstat)
+                subroutine dispAllocFailMSG(mstat)
                         integer(kind=int32), intent(in) :: mstat
                         if (mstat /= 0) then
                                 write (*, *) "memory allocation failed"
@@ -38,7 +38,7 @@
                         end if
                 end subroutine
 
-                subroutine dispDeallocFailMsg(mstat)
+                subroutine dispDeallocFailMSG(mstat)
                         integer(kind=int32), intent(in) :: mstat
                         if (mstat /= 0) then
                                 write (*, *) "deallocation failed"
@@ -122,6 +122,7 @@
                 public nullifies
                 public insert
                 public display
+                public free
 
                 contains
                 subroutine nullifies(head, tail)
@@ -211,6 +212,67 @@
                                 it => it % next
                         end do
                 end subroutine
+
+                function size(head)
+                        ! returns the size of the list
+                        type(node), pointer, intent(in) :: head
+                        type(node), pointer :: it => null()
+                        integer(kind=int32) :: size
+
+                        size = 0
+                        it => head
+                        do while( associated(it) )
+                                it => it % next
+                                size = size + 1
+                        end do
+                end function
+
+                function last(head)
+                        ! returns index to last element in list
+                        type(node), pointer, intent(in) :: head
+                        type(node), pointer :: it => null()
+                        integer(kind=int32) :: last
+
+                        last = 0
+                        if ( associated(head) ) then
+                                it => head
+                                do while( associated(it % next) )
+                                        it => it % next
+                                        last = last + 1
+                                end do
+                        end if
+                end function
+
+                subroutine free(head, tail)
+                        ! frees memory allocated for the linked-list
+                        type(node), pointer, intent(inout) :: head
+                        type(node), pointer, intent(inout) :: tail
+                        type(node), pointer :: it => null()
+                        integer(kind=int32) :: mstat
+                        integer(kind=int32) :: n
+
+                        do while (size(head) /= 1)
+                                ! frees nodes in the range (head, tail]
+                                n = 0
+                                it => head
+                                do while (n /= last(head) - 1)
+                                        ! advances to (tail - 1)
+                                        it => it % next
+                                        n = n + 1
+                                end do
+                                ! deallocates and nullifies tail
+                                deallocate(it % next, stat=mstat)
+                                call dispDeallocFailMSG(mstat)
+                                it % next => null()
+                        end do
+
+                        ! deallocates head
+                        deallocate(head, stat=mstat)
+                        call dispDeallocFailMSG(mstat)
+                        ! destroys the list by nullifying its pointers
+                        head => null()
+                        tail => null()
+                end subroutine
         end module lists
       
         program main
@@ -229,7 +291,7 @@
 
                 ! initializes linked-list by nullifying pointers
                 call nullifies(head, tail)
-                do k = 1, 8
+                do k = 0, 7
                         ! builds linked-list
                         call insert(head, tail, k)
                 end do
@@ -241,5 +303,6 @@
                 pos = 4
                 call insert(head, tail, pos, k)
                 call display(head)
+                call free(head, tail)
 
         end program
