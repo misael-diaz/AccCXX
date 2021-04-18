@@ -258,6 +258,18 @@
                         end do
                 end function
 
+                function empty(head)
+                        ! returns true if list is empty, false otherwise
+                        type(node), pointer, intent(in) :: head
+                        logical(kind=int32) :: empty
+
+                        if ( associated(head) ) then
+                                empty = .false.
+                        else
+                                empty = .true.
+                        end if
+                end function
+
                 function last(head)
                         ! returns index to last element in list
                         type(node), pointer, intent(in) :: head
