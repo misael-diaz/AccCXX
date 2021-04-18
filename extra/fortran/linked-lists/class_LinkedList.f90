@@ -1,9 +1,9 @@
-        ! author: misael-diaz                               April 17, 2021
-        ! source: LinkedList.f90
+        ! author: misael-diaz                               April 18, 2021
+        ! source: class_LinkedList.f90
         !
         ! Synopsis:
-        ! Basic linked-list implementation. Values can be inserted at
-        ! the back, front, or anywhere else in the list.
+        ! A basic linked-list implementation. Values can be inserted at
+        ! the back of the list.
         !
         ! References:
         ! SJ Chapman, FORTRAN for scientists and engineers, 4th edition
@@ -16,11 +16,6 @@
         ! FORTRAN syntax might be confusing because it seems as if the    !
         ! pointer is the struct object itself.                            !
         ! *************************************************************** !
-        !
-        ! TODO:
-        ! [x] hide the implementation details, having users to create a
-        !     node to be able to insert values to a linked-list is not
-        !     ideal.
         !
         module alloc
                 ! implements memory (de)allocation, failure, handlers
@@ -113,20 +108,35 @@
                 use, intrinsic :: iso_fortran_env
                 implicit none
 
+                type, public :: LinkedList
+                        private
+                        type(node), pointer :: head
+                        type(node), pointer :: tail
+                        contains
+                        procedure, public :: push_back =>&
+                                & back_inserter_method
+                        procedure, public :: display =>&
+                                & display_method
+                        final :: destructor
+                end type
+
                 interface insert
                         procedure insert_at_position
                 end interface
+                
+                interface linkedlist
+                        procedure constructor
+                end interface
 
                 private
-                public node
-                public nullifies
-                public insert
-                public front_inserter
-                public back_inserter
-                public display
-                public free
-
+                
                 contains
+                function constructor()
+                        type(LinkedList) :: constructor
+                        constructor % head => null()
+                        constructor % tail => null()
+                end function
+                        
                 subroutine nullifies(head, tail)
                         ! nullifies "head" and "tail" pointers
                         type(node), pointer, intent(inout) :: head
@@ -316,6 +326,38 @@
                         head => null()
                         tail => null()
                 end subroutine
+
+                subroutine back_inserter_method(this, val)
+                        ! inserts node to linked-list, it either
+                        ! initializes the linked-list or inserts
+                        ! a node at the back (end).
+                        class(LinkedList)  :: this
+                        integer(kind=int32), intent(in) :: val
+
+                        if ( .not. associated(this % head) ) then
+                                call initialize(this % head,&
+                                              & this % tail, val)
+                        else
+                                call insert_back(this % tail, val)
+                        end if
+                end subroutine
+
+                subroutine display_method(this)
+                        ! displays linked-list values
+                        class(LinkedList) :: this
+                        type(node), pointer :: it => null()
+
+                        it => this % head
+                        do while( associated(it) )
+                                print *, it % val
+                                it => it % next
+                        end do
+                end subroutine
+
+                subroutine destructor(this)
+                        type(LinkedList) :: this
+                        call free(this % head, this % tail)
+                end subroutine
         end module lists
       
         program main
@@ -325,27 +367,18 @@
                 use lists
                 implicit none
 
-                type(node), pointer :: head => null()
-                type(node), pointer :: tail => null()
-                type(node), pointer :: mid => null()    ! middle node
+                type(LinkedList) :: list
 
                 integer(kind=int32) :: k        ! counter
                 integer(kind=int32) :: pos      ! position
 
-                ! initializes linked-list by nullifying pointers
-                call nullifies(head, tail)
+                write (*, *) 'linked-list object:'
+                ! instantiates an object of the linked-list class
+                list = linkedlist()
                 do k = 0, 7
-                        ! builds linked-list
-                        call front_inserter(head, tail, k)
+                        ! pushes values at the back of the list
+                        call list % push_back(k)
                 end do
-                call display(head)      ! displays linked-list
-                write (*, *)
-
-                ! inserts node at position
-                k = 0
-                pos = 4
-                call insert(head, tail, pos, k)
-                call display(head)
-                call free(head, tail)
+                call list % display()
 
         end program
