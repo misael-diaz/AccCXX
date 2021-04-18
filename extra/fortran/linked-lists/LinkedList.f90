@@ -18,7 +18,7 @@
         ! *************************************************************** !
         !
         ! TODO:
-        ! [ ] hide the implementation details, having users to create a
+        ! [x] hide the implementation details, having users to create a
         !     node to be able to insert values to a linked-list is not
         !     ideal.
         !
@@ -108,6 +108,7 @@
 
         module lists
                 ! implements subroutine for building linked-lists
+                use alloc
                 use nodes
                 use, intrinsic :: iso_fortran_env
                 implicit none
@@ -132,36 +133,35 @@
                         nullify(tail)
                 end subroutine
 
-                subroutine initialize(head, tail, ptr)
+                subroutine initialize(head, tail, val)
                         ! initializes linked-list so that both head
                         ! and tail point at the same node
                         type(node), pointer, intent(inout) :: head
                         type(node), pointer, intent(inout) :: tail
-                        type(node), pointer, intent(inout) :: ptr
+                        integer(kind=int32), intent(in) :: val
 
-                        nullify(ptr % next)
-                        head => ptr
-                        tail => ptr
+                        call create_node(head, val)
+                        tail => head
                 end subroutine
 
-                subroutine insert_back(head, tail, ptr)
+                subroutine insert_back(tail, val)
                         ! inserts at the back (end) of the linked-list
-                        type(node), pointer, intent(inout) :: head
                         type(node), pointer, intent(inout) :: tail
-                        type(node), pointer, intent(inout) :: ptr
+                        integer(kind=int32), intent(in) :: val
 
-                        nullify(ptr % next)     ! nullifies new node
-                        tail % next => ptr      ! binds end-node to new
-                        tail => tail % next     ! updates tail
+                        call create_node(tail, val)
                 end subroutine
 
-                subroutine insert_at_position(head, mid, pos)
+                subroutine insert_at_position(head, tail, pos, val)
                         ! inserts node at position indicated by [pos]
                         type(node), pointer, intent(inout) :: head
-                        type(node), pointer, intent(inout) :: mid
+                        type(node), pointer, intent(inout) :: tail
+                        type(node), pointer :: mid
                         type(node), pointer :: it
 
                         integer(kind=int32), intent(in) :: pos
+                        integer(kind=int32), intent(in) :: val
+                        integer(kind=int32) :: mstat
                         integer(kind=int32) :: n
 
                         n = 0
@@ -172,24 +172,30 @@
                                 n = n + 1
                         end do
 
-                        ! inserts mid between nodes at (pos - 1) and pos
-                        mid % next => it % next ! links to node at pos
-                        it  % next => mid       ! links previous to mid
+                        ! spawns a node at the back of the list
+                        allocate(tail % next, stat=mstat)
+                        call dispAllocFailMsg(mstat)
+                        mid => tail % next      ! associates ptr to node
+                        tail % next => null()   ! unlinks node from list
+
+                        ! inserts node between (left) pos-1 and (right) pos
+                        mid % next => it % next ! links node on right
+                        it  % next => mid       ! links node of left
                         
                 end subroutine
                 
-                subroutine inserter(head, tail, ptr)
+                subroutine inserter(head, tail, val)
                         ! inserts node to linked-list, it either
                         ! initializes the linked-list or inserts
                         ! a node at the back (end).
                         type(node), pointer, intent(inout) :: head
                         type(node), pointer, intent(inout) :: tail
-                        type(node), pointer, intent(inout) :: ptr
+                        integer(kind=int32), intent(in) :: val
                         
                         if ( .not. associated(head) ) then
-                                call initialize(head, tail, ptr)
+                                call initialize(head, tail, val)
                         else
-                                call insert_back(head, tail, ptr)
+                                call insert_back(tail, val)
                         end if
 
                 end subroutine
@@ -216,18 +222,16 @@
 
                 type(node), pointer :: head => null()
                 type(node), pointer :: tail => null()
-                type(node), pointer :: ptr => null()
                 type(node), pointer :: mid => null()    ! middle node
 
                 integer(kind=int32) :: k        ! counter
                 integer(kind=int32) :: pos      ! position
 
-                ! initializes linked list by nullifying pointers
+                ! initializes linked-list by nullifying pointers
                 call nullifies(head, tail)
                 do k = 1, 8
                         ! builds linked-list
-                        call create_node(ptr, k)
-                        call insert(head, tail, ptr)
+                        call insert(head, tail, k)
                 end do
                 call display(head)      ! displays linked-list
                 write (*, *)
@@ -235,8 +239,7 @@
                 ! inserts node at position
                 k = 0
                 pos = 4
-                call create_node(mid, k)
-                call insert(head, mid, pos)
+                call insert(head, tail, pos, k)
                 call display(head)
 
         end program
