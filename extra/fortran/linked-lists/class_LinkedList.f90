@@ -110,13 +110,18 @@
 
                 type, public :: LinkedList
                         private
-                        type(node), pointer :: head
-                        type(node), pointer :: tail
+                        type(node), pointer :: it       ! iterator
+                        type(node), pointer :: head     ! begin
+                        type(node), pointer :: tail     ! end
                         contains
                         procedure, public :: push_back =>&
                                 & back_inserter_method
                         procedure, public :: display =>&
                                 & display_method
+                        procedure, public :: begin => begin_method
+                        procedure, public :: end => final_method
+                        procedure, public :: next => next_method
+                        procedure, public :: size => size_method
                         final :: destructor
                 end type
 
@@ -254,17 +259,17 @@
                         end do
                 end subroutine
 
-                function size(head)
+                function numel(head)
                         ! returns the size of the list
                         type(node), pointer, intent(in) :: head
                         type(node), pointer :: it => null()
-                        integer(kind=int32) :: size
+                        integer(kind=int32) :: numel
 
-                        size = 0
+                        numel = 0
                         it => head
                         do while( associated(it) )
                                 it => it % next
-                                size = size + 1
+                                numel = numel + 1
                         end do
                 end function
 
@@ -304,7 +309,7 @@
                         integer(kind=int32) :: mstat
                         integer(kind=int32) :: n
 
-                        do while (size(head) /= 1)
+                        do while (numel(head) /= 1)
                                 ! frees nodes in the range (head, tail]
                                 n = 0
                                 it => head
@@ -327,11 +332,42 @@
                         tail => null()
                 end subroutine
 
+                subroutine begin_method(this)
+                        ! sets the iterator at the beginning of the list
+                        class(LinkedList) :: this
+
+                        this % it => this % head
+                end subroutine
+
+                subroutine final_method(this)
+                        ! sets the iterator on the final element
+                        class(LinkedList) :: this
+
+                        this % it => this % tail
+                end subroutine
+
+                function next_method(this)
+                        ! advances the iterator to the next element
+                        ! and returns its value
+                        class(LinkedList) :: this
+                        integer(kind=int32) :: next_method
+
+                        next_method = this % it % val
+                        this % it => this % it % next
+                end function
+
+                function size_method(this)
+                        class(LinkedList) :: this
+                        integer(kind=int32) :: size_method
+
+                        size_method = numel(this % head)
+                end function
+
                 subroutine back_inserter_method(this, val)
                         ! inserts node to linked-list, it either
                         ! initializes the linked-list or inserts
                         ! a node at the back (end).
-                        class(LinkedList)  :: this
+                        class(LinkedList) :: this
                         integer(kind=int32), intent(in) :: val
 
                         if ( .not. associated(this % head) ) then
@@ -370,6 +406,7 @@
                 type(LinkedList) :: list
 
                 integer(kind=int32) :: k        ! counter
+                integer(kind=int32) :: n        ! counter
                 integer(kind=int32) :: pos      ! position
 
                 write (*, *) 'linked-list object:'
@@ -379,6 +416,15 @@
                         ! pushes values at the back of the list
                         call list % push_back(k)
                 end do
+                ! displays all values to standard output
                 call list % display()
+                write (*, *)
 
+                n = 0
+                call list % begin()
+                do while(n /= list % size())
+                        ! gets at the values in linked-list
+                        print *, list % next()
+                        n = n + 1
+                end do
         end program
