@@ -25,6 +25,11 @@
  * [ ] partition the code
  * [ ] add functionality: insert at the front, insert at position,
  *                        and other useful utilities for manipulation.
+ *
+ * Revisions:
+ * April 19, 2021	adds empty, create, display, insert_front,
+ * 			and uncreate (iterator variant) functions
+ *
  */
 
 #include <iostream>
@@ -34,71 +39,125 @@ struct node {
 	node* next = NULL ;
 } ;
 
-node* insert_back(node*, const int&) ;
+node** empty(node* ptrs[2]) ;
+node** create(node* ptrs[2], const int& data) ;
+
+void display(node*) ;
 size_t size(node*) ;
-void uncreate(node*) ;
+node* insert_back(node*, const int&) ;
+node* insert_front(node*, node*, const int&) ;
+void uncreate(node*) ;	// deprecated in favor of its newest version
+void uncreate(node*, node*) ;
 
 int main() {
+	// creates and populates a singly linked-list
 	
-	// first node
-	node* ptr = new node ;
 	node* head ;
 	node* tail ;
-	node* it ;		// iterator
+	/* pack and unpack "containers" */
+	node* ptrs[] = {head, tail} ;
+	node** ret ;
 
-	// points both head and tail to node
-	tail = head = ptr ;
-	tail -> data = 0 ;	// defines a value for node
-	tail -> next = NULL ;	
+	// creates an empty linked-list
+	ret = empty(ptrs) ;
+	head = ret[0] ;	tail = ret[1] ;
 
-	// creates a new node bound to next
-	tail -> next = new node ;
-	tail = tail -> next ;	// tail now points to new node
-	head -> next = tail ;	// links head to new node
-	tail -> data = 1 ;
-	tail -> next = NULL ;	
+	// creates a linked-list with a single node
+	ret = create(ptrs, 0) ;
+	head = ret[0] ;	tail = ret[1] ;
 
-	for(int i = 2; i != 8; ++i)
+	for(int i = 1; i != 16; ++i)
 		// insert values at the back of list
-		tail = insert_back(tail, i) ;
+		//tail = insert_back(tail, i) ;
+		head = insert_front(head, tail, i) ;
 
-	it = head ;
-	while(it != NULL) {
-		// display values
-		std::cout << it -> data << std::endl ;
-		it = it -> next ;
-	}
+	// displays elements of list
+	display(head) ;
 
 	// report the size of the list
 	std::cout << "size: " << size(head) << std::endl ;
 	// frees allocated memory
-	uncreate(head) ;
+	uncreate(head, tail) ;
 
 	return 0 ;
 }
 
-node* insert_back(node* tail, const int& data) {
-        // inserts a node at the back of the list
-        tail -> next = new node ;
-        tail = tail -> next ;   // advances tail to new node
-        tail -> data = data ;
-        tail -> next = NULL ;
+node** empty(node* ptrs[2]) {
+	// creates an empty linked-list
+	ptrs[0] = ptrs[1] = NULL ;
+	return ptrs;
+}
 
-	return tail ;		// returns new pointer to caller
+node** create(node* ptrs[2], const int& data) {
+	// creates a list with a node initialized by the given data value
+	/* DO NOT USE FUNCTION FOR INSERTING VALUES TO AN EXISTING LIST */
+	node *head, *tail ;
+
+	/*  unpacks  */
+	head = ptrs[0] ;
+	tail = ptrs[1] ;
+
+	tail = head = new node ;
+	tail -> data = data ;
+	tail -> next = NULL ;
+
+	/*   packs   */
+	ptrs[0] = head ;
+	ptrs[1] = tail ;
+	return ptrs;
+}
+
+void display(node* head) {
+	// displays elements of linked-list to standard output
+
+	node* it = head ;
+	while(it != NULL) {
+		std::cout << it -> data << std::endl ;
+		it = it -> next ;
+	}
+
+	return ;
+}
+
+node* insert_back(node* tail, const int& data) {
+	// inserts a node at the back of the list
+
+	tail -> next = new node ;
+	tail = tail -> next ;
+	tail -> data = data ;
+	tail -> next = NULL ;
+
+	return tail ;
+}
+
+node* insert_front(node* head, node* tail, const int& data) {
+        // inserts a node at the front of the linked-list
+
+	tail -> next = new node ;
+	node* it = tail -> next ;	tail -> next = NULL ;
+	it -> data = data ;
+	it -> next = head ;
+	head = it ;
+
+	return head ;
 }
 
 size_t size(node* head) {
 	// determines the number of elements in linked-list
+
 	node* it = head ;
 	size_t size = 0 ;
-        while(it != NULL) {
-                it = it -> next ;
-                ++size ;
-        }
+	while(it != NULL) {
+		it = it -> next ;
+		++size ;
+	}
+
 	return size ;
 }
 
 void uncreate(node* head) {
+	// initial implementation (deprecated)
+
 	node* it ;
 	while(size(head) != 1) {
 		// deletes elements in the asymetric range (head, tail]
@@ -110,6 +169,27 @@ void uncreate(node* head) {
 		delete it -> next ;
 		it -> next = NULL ;
 	}
+
 	delete head ;	// deletes the remaining one
+	head = NULL ;
 	return ;
+}
+
+void uncreate(node* head, node* tail) {
+	// frees memory allocated for linked-list from back to front
+
+	node* it ;
+	while(head -> next != tail) {
+		it = head ;
+		while(it -> next != tail)
+			it = it -> next ;
+		delete tail ;	tail = NULL ;
+		tail = it ;
+	}
+
+	// deletes remaining pair
+	delete tail ;	tail = NULL ;
+	delete head ;	head = NULL ;
+
+	return  ;
 }
