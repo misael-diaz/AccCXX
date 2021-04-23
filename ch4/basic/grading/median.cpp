@@ -6,6 +6,7 @@
 // Revisions:
 // [1] adds container-oblivious implementation of the median. April 8, 2021
 
+#include <algorithm>
 #include <stdexcept>
 #include <vector>
 
