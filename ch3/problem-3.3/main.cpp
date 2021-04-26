@@ -64,5 +64,12 @@ int main(){
 	std::cout << "strings.distinct():\t\t" << count << std::endl ;
 	}
 
+	{ /* invokes container oblivious version */
+        std::vector<int>::size_type count = distinct(
+			repls.begin(), repls.end(), 0
+	) ;
+        std::cout << "repls.distinct():\t\t" << count << std::endl ;
+        }
+
 	return 0 ;
 }
