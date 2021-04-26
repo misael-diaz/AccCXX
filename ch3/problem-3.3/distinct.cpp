@@ -45,7 +45,7 @@ int main(){
 
         // displays the (unsorted) elements of the vector
 	std::cout << "unsorted vector: " << std::endl ;
-        for (size i = 0; i < n ; ++i)
+        for (size i = 0; i != n ; ++i)
                 std::cout << vector[i] << ' ' ;
         std::cout << std::endl ;
 
@@ -54,7 +54,7 @@ int main(){
 
 	// displays the elements of the vector in nondescending order
 	std::cout << "sorted vector: " << std::endl ;
-        for (size i = 0; i < n ; ++i)
+        for (size i = 0; i != n ; ++i)
                 std::cout << vector[i] << ' ' ;
         std::cout << std::endl ;
 
@@ -65,12 +65,12 @@ int main(){
 	// loop invariant: 
 	//     we have counted [i] elements of the vector and
 	//     have found [count] distinct elements so far
-	while (i < n) {
+	while (i != n) {
 		duplicates = 0;
 		// loop invariant: 
 		// we have counted [duplicates] duplicates of the 
 		// ith (or [i]) element of vector so far
-		for (size j = i + 1; j < n; ++j) {
+		for (size j = i + 1; j != n; ++j) {
 			if (vector[i] == vector[j])
 				++duplicates ;
 			else
