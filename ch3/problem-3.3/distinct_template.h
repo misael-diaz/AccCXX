@@ -23,6 +23,8 @@
  *
  */
 
+template <class In, class T> size_t distinct(In, In, T) ;
+
 template <class T>
 typename std::vector<T>::size_type distinct(std::vector<T> vector) ;
 
