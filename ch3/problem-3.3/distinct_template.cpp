@@ -26,7 +26,7 @@
 #include <vector>
 
 template <class Ran, class T>
-size_t distinct(Ran _begin, Ran _end, T dummy) {
+size_t distinct(const Ran& _begin, const Ran& _end, T dummy) {
 	// counts number of distinct elements in container
 	/* compiler cannot generate code without [dummy] argument */
 
