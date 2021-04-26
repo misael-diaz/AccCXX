@@ -25,14 +25,14 @@
 #include <string>
 #include <vector>
 
-template <class In, class T>
-size_t distinct(In _begin, In _end, T dummy) {
+template <class Ran, class T>
+size_t distinct(Ran _begin, Ran _end, T dummy) {
 	// counts number of distinct elements in container
 	/* compiler cannot generate code without [dummy] argument */
 
 	// copies elements into vector and sorts in non-decreasing order
 	std::vector<T> v(_begin, _end) ;
-	In begin = v.begin() ;	In end = v.end() ;
+	Ran begin = v.begin() ;	Ran end = v.end() ;
 	std::sort(v.begin(), v.end()) ;
 
 	// invariant: we have counted/processed [count] elements so far
@@ -42,7 +42,7 @@ size_t distinct(In _begin, In _end, T dummy) {
 		// invariant:
 		// we have counted [duplicates] duplicates of the value
 		// pointed to by the iterator [begin]
-                for (In it = begin + 1; it != end; ++it) {
+                for (Ran it = begin + 1; it != end; ++it) {
                         if (*it == *begin)
                                 ++duplicates ;
                         else
