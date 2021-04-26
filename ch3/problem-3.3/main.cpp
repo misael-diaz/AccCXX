@@ -45,30 +45,31 @@ int main(){
 
 	// finds and displays number of distinct elements for each vector
 	{
-	std::vector<int>::size_type count = distinct(zeros) ;
-	std::cout << "zeros.distinct():\t\t" << count << std::endl ;
+		std::vector<int>::size_type count = distinct(zeros) ;
+		std::cout << "zeros.distinct():\t\t" << count << std::endl;
 	}
 
 	{
-	std::vector<int>::size_type count = distinct(range) ;
-	std::cout << "range.distinct():\t\t" << count << std::endl ;
+		std::vector<int>::size_type count = distinct(range) ;
+		std::cout << "range.distinct():\t\t" << count << std::endl;
 	}
 
 	{
-	std::vector<int>::size_type count = distinct(repls) ;
-	std::cout << "repls.distinct():\t\t" << count << std::endl ;
+		std::vector<int>::size_type count = distinct(repls) ;
+		std::cout << "repls.distinct():\t\t" << count << std::endl;
 	}
 
 	{
-	std::vector<std::string>::size_type count = distinct(strings) ;
-	std::cout << "strings.distinct():\t\t" << count << std::endl ;
+		std::vector<std::string>::size_type count =
+			distinct(strings) ;
+		std::cout << "strings.distinct():\t\t" <<
+			count << std::endl ;
 	}
 
 	{ /* invokes container oblivious version */
-        std::vector<int>::size_type count = distinct(
-			repls.begin(), repls.end(), 0
-	) ;
-        std::cout << "repls.distinct():\t\t" << count << std::endl ;
+		std::vector<int>::size_type count =
+			distinct(repls.begin(), repls.end(), 0) ;
+		std::cout << "repls.distinct():\t\t" << count << std::endl;
         }
 
 	return 0 ;
