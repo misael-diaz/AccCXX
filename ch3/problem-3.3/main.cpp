@@ -32,7 +32,7 @@ int main(){
 	// defines a vector having repeated values
 	std::vector<int> repls{0, 0, 0, 1, 1, 2, 3, 4} ;
 	// defines a vector of strings
-	std::vector<str> strgs{"mom", "dad", 
+	std::vector<str> strings{"mom", "dad", 
 		"sister", "brother", "grandfather", "grandmother",
 		"uncle", "aunt"} ;
 
@@ -41,7 +41,7 @@ int main(){
 	std::vector<str> vector ;
 	//vector = range ; 
 	//vector = repls ;
-	vector = strgs ;
+	vector = strings ;
 
         // displays the (unsorted) elements of the vector
 	std::cout << "unsorted vector: " << std::endl ;
