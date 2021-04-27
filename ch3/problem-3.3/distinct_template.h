@@ -23,7 +23,7 @@
  *
  */
 
-template <class Ran, class T> size_t distinct(const Ran&, const Ran&, T) ;
+template <class Ran> size_t distinct(Ran, Ran) ;
 
 template <class T>
 typename std::vector<T>::size_type distinct(std::vector<T> vector) ;

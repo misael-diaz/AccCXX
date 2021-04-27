@@ -20,6 +20,7 @@
  * 	April 26, 2021
  * 		* partitions code
  * 		* uses template function for counting distinct elements
+ * 		* uses container-oblivious version
  *
  */
 
@@ -29,7 +30,7 @@
 #include "distinct_template.h"
 
 int main(){
-	// program obtains the number of distinct elements in vector
+	// program obtains the number of distinct elements
 
 	// creates a vector of zeroes
 	std::vector<int> zeros(8, 0) ;
@@ -43,7 +44,7 @@ int main(){
 		"grandmother", "uncle", "aunt"
 	} ;
 
-	// finds and displays number of distinct elements for each vector
+	// finds and displays number of distinct elements
 	{
 		std::vector<int>::size_type count = distinct(zeros) ;
 		std::cout << "zeros.distinct():\t\t" << count << std::endl;
@@ -66,10 +67,19 @@ int main(){
 			count << std::endl ;
 	}
 
-	{ /* invokes container oblivious version */
-		std::vector<int>::size_type count =
-			distinct(repls.begin(), repls.end(), 0) ;
-		std::cout << "repls.distinct():\t\t" << count << std::endl;
+	{       /* invokes container-oblivious version */
+		int array[] = {0, 0, 0, 1, 1, 2, 3, 4} ;
+
+		// sorts array and finds its number of distinct elements
+		std::sort(
+			array, array + sizeof(array) / sizeof(*array)
+		) ;
+
+		size_t count = distinct(
+			array, array + sizeof(array) / sizeof(*array)
+		) ;
+
+		std::cout << "distinct(b, e):\t\t\t" << count << std::endl;
         }
 
 	return 0 ;

@@ -25,15 +25,10 @@
 #include <string>
 #include <vector>
 
-template <class Ran, class T>
-size_t distinct(const Ran& _begin, const Ran& _end, T dummy) {
+template <class Ran>
+size_t distinct(Ran begin, Ran end) {
 	// counts number of distinct elements in container
-	/* compiler cannot generate code without [dummy] argument */
-
-	// copies elements into vector and sorts in non-decreasing order
-	std::vector<T> v(_begin, _end) ;
-	Ran begin = v.begin() ;	Ran end = v.end() ;
-	std::sort(v.begin(), v.end()) ;
+	/* assumes elements have been sorted in non-decreasing order */
 
 	// invariant: we have counted/processed [count] elements so far
 	size_t count = 0 ;
