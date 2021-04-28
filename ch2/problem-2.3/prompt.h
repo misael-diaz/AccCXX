@@ -30,40 +30,11 @@
 
 /* prototypes: */
 void ignore_garbage(std::istream&) ;
+std::istream& padding(std::istream&, const std::string&, int&) ;
 
 template <class T>
 std::istream& prompt(std::istream&, const std::string&, T&) ;
 
-
 /* definitions: */
-void ignore_garbage(std::istream& in) {
-        // ignores whatever could not be extracted including the newline
-        in.ignore(std::numeric_limits<std::streamsize>::max(), '\n') ;
-}
-
-template <class T>
-std::istream& prompt(std::istream& in, const std::string& msg, T& value) {
-        // Prompts user for value until input extraction succeeds
-        // and returns the input stream to the caller, which is
-        // (presumably) in a better position to deal with an
-        // end-of-file (EOF) signal issued by the user.
-
-        while (in) {
-                // prompts user until we get a valid input or EOF
-                std::cout << msg ;
-                in >> value ;
-
-                // handles invalid input from user including overflow
-                if ( in.fail() && !in.eof() ) {
-                        in.clear() ;
-                        ignore_garbage(in) ;
-                } else {
-                        ignore_garbage(in) ;
-                        break ;
-                }
-
-        }
-
-        return in ;
-}
+#include "prompt.cpp"
 #endif

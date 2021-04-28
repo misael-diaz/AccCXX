@@ -21,7 +21,12 @@
  * https://www.learncpp.com/cpp-tutorial/stdcin-and-handling-invalid-input/
  *
  * Revisions:
- * 2021/04/29	implements a basic prompt with template classes
+ * 2021/04/29	implements a basic prompt that validates input from user
+ *
+ * TODO:
+ * [x] write a prompt that validates the padding input by user, it should
+ *     handle negative inputs as well as impose a suitable upper limit.
+ * [x] trim the username if it exceeds a practical number of characters
  *
  */
 
@@ -29,7 +34,7 @@
 #include <string>
 #include "prompt.h"
 
-std::istream& padding(std::istream&, int&) ;
+std::string& trim(std::string&) ;
 void print(const std::string&, const int&) ;
 
 int main() {
@@ -40,17 +45,27 @@ int main() {
 	       "framed message: "	;
 	
 	// if prompt succeeds, ask for an username
-	if ( prompt(std::cin, msg, pad) ) {
+	if ( padding(std::cin, msg, pad) ) {
 		
-		std::string msg = "Please also enter your username: " ;
+		std::string msg = "Please also enter your username "
+			"(up to 16 non-whitespace characters): " ;
 		std::string name ;
 
 		// if prompt succeeds, print the framed greeting
-		if ( prompt(std::cin, msg, name) ) 
-			print(name, pad) ;
+		if ( prompt(std::cin, msg, name) )
+			print(trim(name), pad) ;
 	}
 
 	return 0 ;
+}
+
+std::string& trim(std::string& name) {
+	// trims username to a maximum of 16 characters.
+	if (name.size() > 16) {
+		std::string trimmed = name.substr(0, 16) ;
+		name = trimmed ;
+	}
+	return name ;
 }
 
 void print(const std::string& name, const int& pad) {
