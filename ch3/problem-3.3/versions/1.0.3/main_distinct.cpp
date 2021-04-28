@@ -4,7 +4,8 @@
  * date:   2021/04/27
  *
  * Synopsis:
- * Solves problem 3-3, counts number of distinct words read from a stream.
+ * Solves problem 3-3, counts number of distinct words read from a stream,
+ * and reports the number of repetitions for each word.
  *
  * Comments:
  * Dictionary of English words was derived from another hosted in github 
@@ -72,6 +73,9 @@ int main() {
 		std::cout << word  << "\t" << reps << std::endl ;
 
 	}
+
+	std::cout << std::endl << "#distinct words: " << map.size()
+		<< std::endl ;
 
 	return 0 ;
 }
