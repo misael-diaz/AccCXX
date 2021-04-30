@@ -53,6 +53,7 @@
 #include <vector>
 #include <string>
 
+int numDigits(int) ;
 std::streamsize ndigits(int) ;
 std::streamsize ndigits(const std::vector<int>&) ;
 
@@ -94,10 +95,21 @@ std::streamsize ndigits(const std::vector<int>& v) {
         std::streamsize size = ndigits(*max) ;
 	return size ;
 }
+
 std::streamsize ndigits(int i) {
 	// returns the number of digits of an integer
 
 	std::string str = std::to_string(i) ;
 	std::streamsize size = str.size() ;
 	return size ;
+}
+
+int numDigits(int i) {
+	// determines the number of digits using integer arithmetic
+
+	int digits = 0 ;
+	while (i /= 10)
+		++digits ;
+
+	return (++digits) ;
 }
