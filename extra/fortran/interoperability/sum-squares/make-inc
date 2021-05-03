@@ -1,0 +1,40 @@
+#
+# source: make-inc
+# author: misael-diaz
+# date:   2021/05/03
+#
+# Synopsis:
+# Defines the include file for building the program with GNU make.
+#
+# Copyright (c) 2021 Misael Diaz-Maldonado
+#
+# This file is released under the GNU General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+
+# compilers
+FC      = gfortran-10
+CXX     = g++-10
+
+# options
+FCOPT   = -cpp
+CXXOPT  = -std=c++20
+
+# libraries
+LIBS    = -lgfortran
+
+# headers
+HEADER  = macros.h
+
+# sources
+SUB     = sub.for
+MAIN    = main.cpp
+
+# objects
+SUB_O   = sub.o
+MAIN_O  = main.o
+OBJECTS = $(SUB_O) $(MAIN_O)
+
+# executables
+EXEC    = sum-squares
