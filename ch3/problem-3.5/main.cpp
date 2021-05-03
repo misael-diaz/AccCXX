@@ -70,6 +70,8 @@ int main() {
 			<< std::setprecision(prec) << std::endl ;
 	}
 
+	roster.close() ;
+
 	return 0 ;
 }
 
