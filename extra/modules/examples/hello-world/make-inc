@@ -1,0 +1,46 @@
+#
+# source: make-inc
+# author: misael-diaz
+# date:   2021/05/03
+#
+# Synopsis:
+# Defines the include file for building the program with GNU make.
+#
+# Copyright (c) 2021 Misael Diaz-Maldonado
+#
+# This file is released under the GNU General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+
+# installation path of compilers
+INSTDIR = /opt/gcc/gcc-11.1.0/bin
+
+# compilers
+FC      = $(INSTDIR)/gfortran
+CXX     = $(INSTDIR)/g++
+
+# options
+FCOPT   = -cpp
+CXXOPT  = -fmodules-ts
+
+# libraries
+LIBS    =
+
+# headers
+HEADER  =
+
+# sources
+MOD     = module-hello.cpp
+MAIN    = main.cpp
+
+# objects
+MOD_O   = hello.o
+MAIN_O  = main.o
+OBJECTS = $(MOD_O) $(MAIN_O)
+
+# executables
+EXEC    = hello-world
+
+# gcm cache
+GCM_CACHE = gcm.cache
