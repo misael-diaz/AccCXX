@@ -28,11 +28,13 @@
 #include <map>
 
 void push(std::vector<double>& vector) ;
+void limit(std::vector<double>& vector) ;
 std::string arange(const auto& m, double w) ;
 
 int main() {
 
-	std::vector<double> x ;	push(x) ;	// fills vector with grades
+	// fills vector with grades in the range [0, 100)
+	std::vector<double> x ;	push(x) ; limit(x) ;
 
 	double w = 10 ;	/* bin width */
 	std::map<double, int> map ;		// grade-based association
@@ -84,5 +86,13 @@ void push(std::vector<double>& vector) {
 
 	for(int i = 0 ; i != 1024 ; ++i)
 		vector.push_back( distribution(generator) ) ;
+
+}
+
+void limit(std::vector<double>& vector) {
+	// limits vector from above to ensure "inclusiveness" of last bin
+
+	for(auto& x: vector)
+		x = (x > 99.99) ? 99.99: x ;
 
 }
