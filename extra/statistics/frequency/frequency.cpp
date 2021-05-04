@@ -62,8 +62,9 @@ int main() {
 std::string arange(const auto& m, double w) {
 	// defines range of bin (note failure scores are grouped)
 
-	size_t i = w * m.first ;
-	size_t j = (i == 0) ? w * (m.first + 6): w * (m.first + 1) ;
+	size_t i = std::floor(w * m.first) ;
+	size_t j = (i == 0) ? std::floor( w * (m.first + 6) ):
+			      std::floor( w * (m.first + 1) ) ;
 
 	std::string range ;
 	if (i == 90) {	/* last bin is inclusive by definition */
