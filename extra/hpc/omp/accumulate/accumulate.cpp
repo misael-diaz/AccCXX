@@ -30,6 +30,7 @@
 
 int sum(int, int) ;
 void greet(int, int) ;
+void greet(int, int, int) ;
 
 const int size = 256 ;		// global total of ints
 
@@ -41,13 +42,15 @@ int main() {
 	{
 		int thread  = omp_get_thread_num() ;
 		int threads = omp_get_num_threads() ;
-		#pragma omp critical
-		{
-			greet(thread, threads) ; // states designation
-		}
-		
+
 		// thread stores partial sum
 		workspace[thread] = sum(thread, threads) ;
+		#pragma omp critical
+		{
+			// states designation and intermediate result
+			greet(thread, threads, workspace[thread]) ;
+		}
+		
 	}
 
 	// obtains the running total 	/serial code/
@@ -69,6 +72,15 @@ void greet(int thread, int threads) {
 	std::cout << "hello world, my designation is " << thread << " "
 		  << "of "  << threads << std::endl ;
 }
+
+void greet(int thread, int threads, int sum) {
+        // Borg greeting, prints thread id and total number of threads
+
+        std::cout << "hello world, my designation is " << thread << " "
+                  << "of "  << threads << " and my sum yields "
+		  << sum << std::endl ;
+}
+
 
 int sum(int thread, int threads) {
 	// accumulates integers in the (computed) asymmetric range [b, e)
