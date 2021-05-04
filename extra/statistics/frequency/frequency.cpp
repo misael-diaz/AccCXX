@@ -39,7 +39,7 @@ int main() {
 	double w = 10 ;	/* bin width */
 	std::map<double, int> map ;		// grade-based association
 	for(double i{0} ; const auto& value: x) {
-		i  = std::floor(value / w) ;
+		i  = std::floor(0.10 * value) ;
 		(i > 5) ? ++map[i]: ++map[.0] ;	// groups failure scores
 	}
 
@@ -62,8 +62,9 @@ int main() {
 std::string arange(const auto& m, double w) {
 	// defines range of bin (note failure scores are grouped)
 
-	size_t i = w * m.first ;
-	size_t j = (i == 0) ? w * (m.first + 6): w * (m.first + 1) ;
+	size_t i = std::floor(w * m.first) ;
+	size_t j = (i == 0) ? std::floor( w * (m.first + 6) ):
+			      std::floor( w * (m.first + 1) ) ;
 
 	std::string range ;
 	if (i == 90) {	/* last bin is inclusive by definition */
