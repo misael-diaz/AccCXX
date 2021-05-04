@@ -39,7 +39,7 @@ int main() {
 	double w = 10 ;	/* bin width */
 	std::map<double, int> map ;		// grade-based association
 	for(double i{0} ; const auto& value: x) {
-		i  = std::floor(value / w) ;
+		i  = std::floor(0.10 * value) ;
 		(i > 5) ? ++map[i]: ++map[.0] ;	// groups failure scores
 	}
 
