@@ -16,6 +16,8 @@
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
+ * Revisions:
+ * 	2021/05/05	implements the mean (or average) function
  *
  */
 
@@ -38,7 +40,20 @@ std::vector<double> even(size, size, size, const std::vector<double>&) ;
 double interpolate(double, double, double) ;
 
 export namespace stats {
-	std::vector<double> quartiles(const std::vector<double>&) ; 
+	double mean(const std::vector<double>&) ;
+	std::vector<double> quartiles(const std::vector<double>&) ;
+}
+
+double stats::mean(const std::vector<double>& x) {
+	// returns the mean value of a vector of doubles
+
+	if (x.size() == 0) {
+		throw std::domain_error("empty vector") ;
+	}
+
+	double sum = 0 ;
+	return ( std::accumulate(x.begin(), x.end(), sum) / x.size() ) ;
+
 }
 
 std::vector<double> stats::quartiles(const std::vector<double>& x) {
