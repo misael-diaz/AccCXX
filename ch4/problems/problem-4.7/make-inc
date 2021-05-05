@@ -33,7 +33,7 @@ HEADER  =
 
 # sources
 MOD     = module-statistics.cpp
-MAIN    = quartiles.cpp
+MAIN    = average.cpp
 
 # objects
 MOD_O   = statistics.o
@@ -41,7 +41,7 @@ MAIN_O  = main.o
 OBJECTS = $(MOD_O) $(MAIN_O)
 
 # executables
-EXEC    = exec-quartiles
+EXEC    = exec-average
 
 # gcm cache
 GCM_CACHE = gcm.cache
