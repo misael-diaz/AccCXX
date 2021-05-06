@@ -20,6 +20,18 @@
  * [1] gcc.gnu.org/onlinedocs/libgomp/
  * [2] (helloacm.com/simple-tutorial-with-openmp-how-to-use-
  *      parallel-block-in-cc-using-openmp/)
+ * [3] (software.intel.com/content/www/us/en/develop/articles/
+ *      avoiding-and-identifying-false-sharing-among-threads.html)
+ * [4] stackoverflow.com/questions/4802565/multiple-threads-and-cpu-cache
+ * [5] en.cppreference.com/w/cpp/language/alignof
+ *
+ * Notes:
+ * Caf's reply to inquiry in stackoverflow (ref 4) was instructive,
+ * especially the comments on memory alignment. The alignof operator (since
+ * c++11) can be used to find the alignment for any type (ref 5).
+ *
+ * Revisions:
+ * 2021/05/06		pads shared placeholder to mitigate false sharing
  *
  */
 
@@ -28,15 +40,23 @@
 #include <numeric>
 #include <omp.h>
 
+const int pad = 128 ;
+const int n_threads = 4 ;
+const int numel = pad * n_threads ;
+
 int sum(int, int) ;
 void greet(int, int) ;
 void greet(int, int, int) ;
+void zeros(int array[numel]) ;
 
 const int size = 256 ;		// global total of ints
 
 int main() {
 
-	int workspace[4] ;	// shared placeholder for intermediate data
+	// shared placeholder for intermediate data
+	int workspace[numel] ;	zeros(workspace) ;
+	/*      verifies that /workspace/ has a 4-byte alignment       */
+	//std::cout << "alignment: " << alignof(workspace) << std::endl ;
 
 	#pragma omp parallel num_threads(4) shared(workspace)
 	{
@@ -44,11 +64,11 @@ int main() {
 		int threads = omp_get_num_threads() ;
 
 		// thread stores partial sum
-		workspace[thread] = sum(thread, threads) ;
+		workspace[pad * thread] = sum(thread, threads) ;
 		#pragma omp critical
 		{
 			// states designation and intermediate result
-			greet(thread, threads, workspace[thread]) ;
+			greet(thread, threads, workspace[pad * thread]) ;
 		}
 		
 	}
@@ -64,6 +84,12 @@ int main() {
 	std::cout << "exact: " << (size - 1) * size / 2 << std::endl ;
 
 	return 0 ;
+}
+
+void zeros(int array[numel]) {
+	// fills array with zeros
+	for (int i = 0 ; i != numel ; ++i)
+		array[i] = 0 ;
 }
 
 void greet(int thread, int threads) {
