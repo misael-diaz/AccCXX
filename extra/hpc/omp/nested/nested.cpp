@@ -31,6 +31,18 @@
  * [1] gcc.gnu.org/onlinedocs/libgomp/
  * [2] (helloacm.com/simple-tutorial-with-openmp-how-to-use-
  *      parallel-block-in-cc-using-openmp/)
+ * [3] (software.intel.com/content/www/us/en/develop/articles/
+ *      avoiding-and-identifying-false-sharing-among-threads.html)
+ * [4] stackoverflow.com/questions/4802565/multiple-threads-and-cpu-cache
+ * [5] en.cppreference.com/w/cpp/language/alignof
+ *
+ * Notes:
+ * Caf's reply to inquiry in stackoverflow (ref 4) was instructive,
+ * especially the comments on memory alignment. The alignof operator (since
+ * c++11) can be used to find the alignment for any type (ref 5).
+ *
+ * Revisions:
+ * 2021/05/06           pads shared placeholder to mitigate false sharing
  *
  */
 
@@ -39,22 +51,27 @@
 #include <numeric>
 #include <omp.h>
 
-int& loop(const int&, const int&, int&) ;	// outer-loop
-int& nest(const int&, const int&, int&) ;	// nested-loop
-
-void greet(int, int) ;
-void greet(int, int, int) ;
-
 /* global constants */
+const int pad = 128 ;
 const int n_threads = 16 ;		// number of threads
+const int numel = pad * n_threads ;	// equal to size of shared array
 const int loop_size = 2 ;		// outer-loop size
 const int nest_size = 256 ;		// nested-loop size
 const int size = loop_size * nest_size ;// total
  
+void zeros(int array[numel]) ;
+void greet(int, int) ;
+void greet(int, int, int) ;
+
+int& loop(const int&, const int&, int&) ;	// outer-loop
+int& nest(const int&, const int&, int&) ;	// nested-loop
+
 int main() {
 
 	// shared placeholder for intermediate data
-	int workspace[n_threads] ;	
+	int workspace[numel] ;	zeros(workspace) ;
+	/*      verifies that /workspace/ has a 4-byte alignment       */
+	//std::cout << "alignment: " << alignof(workspace) << std::endl ;
 
 	#pragma omp parallel num_threads(n_threads) shared(workspace)
 	{
@@ -62,12 +79,12 @@ int main() {
 		int threads = omp_get_num_threads() ;
 
 		int count = 0 ;
-		workspace[thread] = loop(thread, threads, count) ;
+		workspace[pad * thread] = loop(thread, threads, count) ;
 
 		#pragma omp critical
 		{
 			// states designation and intermediate result
-			greet(thread, threads, workspace[thread]) ;
+			greet(thread, threads, workspace[pad * thread]) ;
 		}
 		
 	}
@@ -83,6 +100,12 @@ int main() {
 	std::cout << "exact: " << size  << std::endl ;
 
 	return 0 ;
+}
+
+void zeros(int array[numel]) {
+	// fills array with zeros
+	for (int i = 0 ; i != numel ; ++i)
+		array[i] = 0 ;
 }
 
 void greet(int thread, int threads) {
