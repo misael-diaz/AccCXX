@@ -35,6 +35,7 @@ using std::cout ;
 using std::endl ;
 using std::setw ;
 using std::left ;
+using std::sort ;
 using std::vector ;
 using std::string ;
 using std::streamsize ;
@@ -65,6 +66,7 @@ int main() {
 
 	roster.close() ;
 
+	sort(students.begin(), students.end(), compare) ;
 	// reports the final (or overall) grade for each student
 	for (const auto& student: students) {
 		try {
