@@ -30,15 +30,20 @@ LIBS    =
 MOD_STATISTICS   = module-statistics.cpp
 MOD_STUDENT_INFO = module-student-info.cpp
 MAIN             = main.cpp
+ROSTER           = roster.cpp
 
 # objects
 MOD_STATISTICS_O   = module_statiscis.o
 MOD_STUDENT_INFO_O = module_student_info.o
 MAIN_O             = main.o
-OBJECTS            = $(MOD_STATISTICS_O) $(MOD_STUDENT_INFO_O) $(MAIN_O)
+ROSTER_O           = roster.o
+OBJECTS            = $(MOD_STATISTICS_O) $(MOD_STUDENT_INFO_O) $(MAIN_O) 
+ALL_OBJECTS        = $(ROSTER_O) $(OBJECTS) 
 
 # executables
-EXEC    = grading-program
+MAIN_EXEC   = grading-program
+ROSTER_EXEC = generate-roster
+EXEC        = $(ROSTER_EXEC) $(MAIN_EXEC)
 
 # gcm cache
 GCM_CACHE = gcm.cache
