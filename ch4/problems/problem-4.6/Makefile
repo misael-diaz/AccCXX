@@ -18,8 +18,12 @@ include make-inc
 
 all: $(EXEC)
 
-$(EXEC): $(OBJECTS)
-	$(CXX) $(CXXOPT) $(OBJECTS) -o $(EXEC) $(LIBS)\
+$(ROSTER_EXEC): $(ROSTER_O)
+	$(CXX) $(CXXOPT) $(ROSTER_O) -o $(ROSTER_EXEC) $(LIBS)\
+	       	-Wl,-rpath -Wl,$(LIBSTDCXX_DIR)
+
+$(MAIN_EXEC): $(OBJECTS)
+	$(CXX) $(CXXOPT) $(OBJECTS) -o $(MAIN_EXEC) $(LIBS)\
 	       	-Wl,-rpath -Wl,$(LIBSTDCXX_DIR)
 
 $(MOD_STUDENT_INFO_O): $(MOD_STATISTICS) $(MOD_STUDENT_INFO)
@@ -32,4 +36,4 @@ $(MAIN_O): $(MOD_STATISTICS_O) $(MOD_STUDENT_INFO_O) $(MAIN)
 	$(CXX) $(CXXOPT) -c $(MAIN) -o $(MAIN_O)
 
 clean:
-	/bin/rm -rf $(OBJECTS) $(EXEC) $(GCM_CACHE)
+	/bin/rm -rf $(ALL_OBJECTS) $(EXEC) $(GCM_CACHE)
