@@ -98,7 +98,7 @@ int main() {
 
 		gen = ulcg_CreateLCG (params) ; // creates LCG object
 
-	} catch (const std::logic_error& e) {
+	} catch (const std::domain_error& e) {
 		// exits if an unimplemented LCG is needed
 
 		std::cout << e.what() << std::endl ;
