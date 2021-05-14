@@ -1,0 +1,63 @@
+#
+# source: make-inc
+# author: misael-diaz
+# date:   2021/05/13
+#
+# Synopsis:
+# Defines the include file for building the program with GNU make.
+#
+#
+# Copyright (c) 2021 Misael Diaz-Maldonado
+# All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
+
+
+# installation path of compilers
+INSTDIR       = /opt/gcc/gcc-11.1.0/bin
+LIBSTDCXX_DIR = /opt/gcc/gcc-11.1.0/lib/../lib64 
+
+# compilers
+CXX     = $(INSTDIR)/g++
+
+# options
+CXXOPT  = -fmodules-ts -Wall -g
+
+# libraries
+LIBS    =
+
+# sources
+MOD_ULCG   = ulcg-module.cpp
+MOD_UNIF01 = unif01-module.cpp
+MOD_UTIL   = util-module.cpp
+MOD_STAT   = stat-module.cpp
+MAIN       = main.cpp
+
+# objects
+MOD_ULCG_O   = ulcg_module.o
+MOD_UNIF01_O = unif01_module.o
+MOD_UTIL_O   = util_module.o
+MOD_STAT_O   = stat_module.o
+MODS_O       = $(MOD_STAT_O) $(MOD_ULCG_O) $(MOD_UNIF01_O) $(MOD_UTIL_O)
+
+MAIN_O       = main.o
+OBJECTS      = $(MODS_O) $(MAIN_O) 
+ALL_OBJECTS  = $(OBJECTS) 
+
+# executables
+EXEC   = lcg-prng
+
+# gcm cache
+GCM_CACHE = gcm.cache
