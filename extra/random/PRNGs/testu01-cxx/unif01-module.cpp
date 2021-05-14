@@ -87,6 +87,10 @@ export module UNIF01 ;
 export namespace unif01 {
 
 
+	double unif01_NORM32 = 4294967296.0 ;
+	double unif01_INV32  = 2.328306436538696289e-10 ;
+
+
         template <class P, class S> struct unif01_GenClass {
    		// pseudo-random number generator PRNG Class     
 		P *param ;

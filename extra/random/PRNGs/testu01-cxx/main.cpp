@@ -102,9 +102,10 @@ int main() {
 
 	// displays the name and (current) state of the LCG
 	std::cout << " " << gen -> name << ":" << std::endl ;
-        gen -> Write(gen -> state) ;    
-        gen = ulcg_DeleteGen (gen) ;    // destroys LCG object
-
+	gen -> Write(gen -> state) ;
+	unsigned long Bits = gen -> GetBits(gen -> param, gen -> state) ;
+	std::cout << " Bits: " << Bits << std::endl ;
+	gen = ulcg_DeleteGen (gen) ;    // destroys LCG object
 
 
 	/* post-processing (small crush suite is yet to be implemented) */

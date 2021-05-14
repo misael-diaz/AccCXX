@@ -170,7 +170,9 @@ unif01_Gen* ulcg::ulcg_CreateLCG (const std::vector<long>& Parameters) {
 
 	gen -> param   = param ;
 	gen -> state   = state ;
-	// TODO: set it up so that the "name" is determined at runtime
+	// TODO:
+	// set it up so that the "name" is determined at runtime
+	// use std::format string for the implementation
 	gen -> name    = std::string("SmallLCG_U01") ;
 	gen -> Write   = &WrLCG ;
 	gen -> GetU01  = &SmallLCG_U01 ;
@@ -253,10 +255,12 @@ double SmallLCG_U01 (LCG_param *param, LCG_state *state) {
 }
 
 unsigned long SmallLCG_Bits (LCG_param *param, LCG_state *state) {
-	/* TODO: implement */
 
-	throw std::runtime_error("not implemented") ;
-	return 0UL ;
+	unsigned long bits = (
+		unif01::unif01_NORM32 * SmallLCG_U01 (param, state)
+	) ;
+
+	return bits ;
 
 }
 
