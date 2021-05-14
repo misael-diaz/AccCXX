@@ -128,6 +128,11 @@ void ulcg_CheckLCG_Params (const std::vector<long>& Parameters) ;
 void ulcg_CheckLCG_Vector (const std::vector<long>& Parameters) ;
 void ulcg_CheckLCG_Values (const std::vector<long>& Parameters) ;
 
+void ulcg_implCheckLCG (const long& c) ;
+void ulcg_implCheckLCG (const long& q, const long& r) ;
+void ulcg_implCheckLCG (const long& c, const long& q, const long& r) ;
+void ulcg_implCheckLCG (const std::vector<long>& Parameters) ;
+
 void WrLCG (LCG_state *state) ;
 double SmallLCG_U01 (LCG_param *param, LCG_state *state) ;
 unsigned long SmallLCG_Bits (LCG_param *param, LCG_state *state) ;
@@ -147,10 +152,10 @@ unif01_Gen* ulcg::ulcg_CreateLCG (const std::vector<long>& Parameters) {
 
 
 	// unpacks vector of parameters
-	const long m = Parameters[0] ;	// modulus
-	const long a = Parameters[1] ;	// constant
-	const long c = Parameters[2] ;	// constant
-	const long s = Parameters[3] ;	// seed
+	const long& m = Parameters[0] ;	// modulus
+	const long& a = Parameters[1] ;	// constant
+	const long& c = Parameters[2] ;	// constant
+	const long& s = Parameters[3] ;	// seed
 
 	
 	gen = util::util_Malloc(gen) ;
@@ -208,10 +213,10 @@ void ulcg_CheckLCG_Vector(const std::vector<long>& Parameters) {
 void ulcg_CheckLCG_Values(const std::vector<long>& Parameters) {
         
 	// unpacks
-        const long m = Parameters[0] ;      // modulus
-        const long a = Parameters[1] ;      // constant
-        const long c = Parameters[2] ;      // constant
-        const long s = Parameters[3] ;      // seed
+        const long& m = Parameters[0] ;      // modulus
+        const long& a = Parameters[1] ;      // constant
+        const long& c = Parameters[2] ;      // constant
+        const long& s = Parameters[3] ;      // seed
 
         if ( (a < 0) || (c < 0) || (s < 0) ) {
 
@@ -227,17 +232,77 @@ void ulcg_CheckLCG_Values(const std::vector<long>& Parameters) {
 
 	}
 
+	ulcg_implCheckLCG(Parameters) ;
 
-	/* NOTE: only the SmallLCG has been implemented */
-	if (m - 1 > (LONG_MAX - c) / a) {
-                throw std::domain_error (
-                    "ulcg_CreateLCG:    Medium or Larger LCGs "
-		    "have not been implemeneted"
-                ) ;
-	}
-	
 }
 
+void ulcg_implCheckLCG (const std::vector<long>& Parameters) {
+
+        // unpacks
+        const long& m = Parameters[0] ;	// modulus
+        const long& a = Parameters[1] ;	// constant
+        const long& c = Parameters[2] ;	// constant
+
+	const long q = m / a ;		// quotient
+	const long r = m % a ;		// reminder
+
+
+        /* NOTE: only the SmallLCG has been implemented */
+        if (m - 1 <= (LONG_MAX - c) / a) {
+
+		return ;	// Small LCGs
+
+        } else {
+
+		ulcg_implCheckLCG (c, q, r) ; 	// Medium LCGs
+	}
+	
+
+}
+
+void ulcg_implCheckLCG (const long& q, const long& r) {
+	// checks implementation status of Large LCGs
+
+	throw std::domain_error (
+		"ulcg_CreateLCG: Large LCGs are yet to be implemented"
+	) ;
+
+}
+
+void ulcg_implCheckLCG (const long& c, const long& q, const long& r) {
+
+	if (r > q) {
+
+		ulcg_implCheckLCG(q, r) ;	// Large LCGs
+
+	} else {
+
+		ulcg_implCheckLCG(c) ;		// Medium LCGs
+
+	}
+
+	return ;
+
+}
+
+void ulcg_implCheckLCG(const long& c) {
+
+	if (c != 0) {	// Medium LCGs
+
+		throw std::domain_error (
+                    "ulcg_CreateLCG: Medium LCGs are yet to be implemented"
+		) ;
+
+	} else {	// Medium MLCGs
+
+		throw std::domain_error (
+                    "ulcg_CreateLCG: Medium LCGs are yet to be implemented"
+		) ;
+	}
+
+	return ;
+
+}
 
 void WrLCG (LCG_state *state) {	// writes state to the std ostream
 

@@ -93,8 +93,19 @@ int main() {
         const std::vector<long> params{ 2147483647, 12001, 0, 12345 } ;
 
         unif01_Gen *gen = NULL ;
-        gen = ulcg_CreateLCG (params) ; // creates LCG object
+	// catch exception thrown by ulcg_implCheck()
+	try {
 
+		gen = ulcg_CreateLCG (params) ; // creates LCG object
+
+	} catch (const std::logic_error& e) {
+		// exits if an unimplemented LCG is needed
+
+		std::cout << e.what() << std::endl ;
+		gen = ulcg_DeleteGen (gen) ;
+		return 1 ;
+
+	}
 
         for (auto& prnum: prnums)	// stores PRNs in placeholder
                 prnum = gen -> GetU01(gen -> param, gen -> state) ;
