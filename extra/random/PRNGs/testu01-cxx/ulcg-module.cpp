@@ -224,13 +224,13 @@ void ulcg_implCheckLCG (const std::vector<long>& Parameters) {
 
 
         /* NOTE: only the SmallLCG has been implemented */
-        if (m - 1 <= (LONG_MAX - c) / a) {
+        if (m - 1 > (LONG_MAX - c) / a) {
 
-		return ;	// Small LCGs
+		ulcg_implCheckLCG (c, q, r) ; 	// Medium LCGs
 
         } else {
 
-		ulcg_implCheckLCG (c, q, r) ; 	// Medium LCGs
+		return ;	// Small LCGs
 	}
 	
 
