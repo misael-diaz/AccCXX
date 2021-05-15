@@ -90,7 +90,9 @@ int main() {
         std::vector<double> prnums(0x00FFFFFF) ;
 
         // defines suitable parameters for a Small LCG:   (m, a, c, s)
-        const std::vector<long> params{ 2147483647, 12001, 0, 12345 } ;
+        const std::vector<long> params{
+		72057594037927936L, 2147483647L, 1L, 12345L
+	} ;
 
         unif01_Gen *gen = NULL ;
 	// catch exception thrown by ulcg_implCheck()
@@ -151,6 +153,17 @@ int main() {
 //
 //
 
+//
+// Parametrizations:
+//
+// Small LCG:
+// const std::vector<long> params{ 2147483647L, 12001, 0L, 12345L } ;
+//
+// Medium LCG:
+// const std::vector<long> params{
+// 	72057594037927936L, 2147483647L, 1L, 12345L
+// } ;
+//
 
 /*
  *

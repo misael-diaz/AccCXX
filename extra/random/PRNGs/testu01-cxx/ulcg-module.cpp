@@ -149,9 +149,15 @@ unif01_Gen* ulcg_createLCG (unif01_Gen*, const long&, const long&) ;// Larg
 
 
 
-void WrLCG (LCG_state *state) ;
-double SmallLCG_U01 (LCG_param *param, LCG_state *state) ;
-unsigned long SmallLCG_Bits (LCG_param *param, LCG_state *state) ;
+void WrLCG (LCG_state*) ;
+
+
+double SmallLCG_U01 (LCG_param*, LCG_state*) ;
+unsigned long SmallLCG_Bits (LCG_param*, LCG_state*) ;
+
+
+double MediumLCG_U01 (LCG_param*, LCG_state*) ;
+unsigned long MediumLCG_Bits (LCG_param*, LCG_state*) ;
 
 
 // function definitions:
@@ -265,9 +271,7 @@ void ulcg_implCheckLCG(const long& c) {
 
 	if (c != 0) {	// Medium LCGs
 
-		throw std::domain_error (
-                    "ulcg_CreateLCG: Medium LCGs are yet to be implemented"
-		) ;
+		return ;
 
 	} else {	// Medium MLCGs
 
@@ -366,14 +370,16 @@ unif01_Gen* ulcg_createLCG (unif01_Gen* gen, const long& c) {
 
 	if (c != 0) {	// Medium LCGs
 
-		throw std::domain_error (
-		    "ulcg_CreateLCG: Medium LCGs are yet to be implemented"
-		) ;
+		gen -> name    = std::string("MediumLCG_U01") ;
+		gen -> Write   = &WrLCG ;
+		gen -> GetU01  = &MediumLCG_U01 ;
+		gen -> GetBits = &MediumLCG_Bits ;
+		return gen ;
 
 	} else {	// Medium MLCGs
 
 		throw std::domain_error (
-                    "ulcg_CreateLCG: Medium LCGs are yet to be implemented"
+                    "ulcg_CreateLCG: Medium MLCGs is yet to be implemented"
 		) ;
 
 	}
@@ -408,13 +414,40 @@ unsigned long SmallLCG_Bits (LCG_param *param, LCG_state *state) {
 
 }
 
+double MediumLCG_U01 (LCG_param *param, LCG_state *state) {
+	// implements a medium LCG:  ( r < q  &&  (c != 0) )
 
-unif01_Gen* ulcg::ulcg_DeleteGen (unif01_Gen* gen) { // Destroys generator
+	long k ;
+
+	k = state -> S / param -> q ;
+	state -> S = param -> A * (state -> S - k * param -> q) - k *
+		     param -> r ;
+
+	if (state -> S < 0)
+		state -> S += param -> C ;
+	else
+		state -> S = (state -> S - param -> M) + param -> C ;
+
+	if (state -> S < 0)
+		state -> S += param -> M ;
+
+	return (state -> S * param -> Norm) ;
+
+}
+
+unsigned long MediumLCG_Bits (LCG_param *param, LCG_state *state) {
 	
-	return unif01::unif01_DeleteGen (gen) ;
+	unsigned long bits = (
+		unif01::unif01_NORM32 * MediumLCG_U01 (param, state)
+	);
 
+	return bits ;
 }
 
 
 
+unif01_Gen* ulcg::ulcg_DeleteGen (unif01_Gen* gen) { // Destroys generator
 
+	return unif01::unif01_DeleteGen (gen) ;
+
+}
