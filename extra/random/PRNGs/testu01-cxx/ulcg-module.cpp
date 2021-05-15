@@ -160,6 +160,11 @@ double MediumLCG_U01 (LCG_param*, LCG_state*) ;
 unsigned long MediumLCG_Bits (LCG_param*, LCG_state*) ;
 
 
+double MediumMLCG_U01 (LCG_param*, LCG_state*) ;
+unsigned long MediumMLCG_Bits (LCG_param*, LCG_state*) ;
+
+
+
 // function definitions:
 unif01_Gen* ulcg::ulcg_CreateLCG (const std::vector<long>& Parameters) {
 	// creates a linear congruential generator
@@ -275,9 +280,7 @@ void ulcg_implCheckLCG(const long& c) {
 
 	} else {	// Medium MLCGs
 
-		throw std::domain_error (
-                    "ulcg_CreateLCG: Medium LCGs are yet to be implemented"
-		) ;
+		return ;
 	}
 
 	return ;
@@ -378,13 +381,13 @@ unif01_Gen* ulcg_createLCG (unif01_Gen* gen, const long& c) {
 
 	} else {	// Medium MLCGs
 
-		throw std::domain_error (
-                    "ulcg_CreateLCG: Medium MLCGs is yet to be implemented"
-		) ;
+		gen -> name    = std::string("MediumMLCG_U01") ;
+		gen -> Write   = &WrLCG ;
+		gen -> GetU01  = &MediumMLCG_U01 ;
+		gen -> GetBits = &MediumMLCG_Bits ;
+		return gen ;
 
 	}
-
-	return NULL ;
 
 }
 
@@ -417,9 +420,8 @@ unsigned long SmallLCG_Bits (LCG_param *param, LCG_state *state) {
 double MediumLCG_U01 (LCG_param *param, LCG_state *state) {
 	// implements a medium LCG:  ( r < q  &&  (c != 0) )
 
-	long k ;
 
-	k = state -> S / param -> q ;
+	long k = state -> S / param -> q ;
 	state -> S = param -> A * (state -> S - k * param -> q) - k *
 		     param -> r ;
 
@@ -440,6 +442,30 @@ unsigned long MediumLCG_Bits (LCG_param *param, LCG_state *state) {
 	unsigned long bits = (
 		unif01::unif01_NORM32 * MediumLCG_U01 (param, state)
 	);
+
+	return bits ;
+}
+
+
+double MediumMLCG_U01 (LCG_param *param, LCG_state *state) {
+	// LCG implementation is applied when r < q and c = 0
+
+	long k = state -> S / param -> q ;
+	state -> S = param -> A * (state -> S - k * param -> q) - k *
+	             param -> r ;
+
+	if (state->S < 0)
+		state -> S += param -> M ;
+
+	return (state->S * param->Norm) ;
+}
+
+
+unsigned long MediumMLCG_Bits (LCG_param *param, LCG_state *state) {
+
+	unsigned long bits = (
+		unif01::unif01_NORM32 * MediumMLCG_U01 (param, state)
+	) ;
 
 	return bits ;
 }
