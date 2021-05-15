@@ -90,11 +90,24 @@ int main() {
         std::vector<double> prnums(0x00FFFFFF) ;
 
         // defines suitable parameters for a Small LCG:   (m, a, c, s)
-        const std::vector<long> params{ 2147483647, 12001, 0, 12345 } ;
+        const std::vector<long> params{
+		72057594037927936L, 2147483647L, 0L, 12345L
+	} ;
 
         unif01_Gen *gen = NULL ;
-        gen = ulcg_CreateLCG (params) ; // creates LCG object
+	// catch exception thrown by ulcg_implCheck()
+	try {
 
+		gen = ulcg_CreateLCG (params) ; // creates LCG object
+
+	} catch (const std::domain_error& e) {
+		// exits if an unimplemented LCG is needed
+
+		std::cout << e.what() << std::endl ;
+		gen = ulcg_DeleteGen (gen) ;
+		return 1 ;
+
+	}
 
         for (auto& prnum: prnums)	// stores PRNs in placeholder
                 prnum = gen -> GetU01(gen -> param, gen -> state) ;
@@ -102,9 +115,10 @@ int main() {
 
 	// displays the name and (current) state of the LCG
 	std::cout << " " << gen -> name << ":" << std::endl ;
-        gen -> Write(gen -> state) ;    
-        gen = ulcg_DeleteGen (gen) ;    // destroys LCG object
-
+	gen -> Write(gen -> state) ;
+	unsigned long Bits = gen -> GetBits(gen -> param, gen -> state) ;
+	std::cout << " Bits: " << Bits << std::endl ;
+	gen = ulcg_DeleteGen (gen) ;    // destroys LCG object
 
 
 	/* post-processing (small crush suite is yet to be implemented) */
@@ -139,6 +153,17 @@ int main() {
 //
 //
 
+//
+// Parametrizations:
+//
+// Small LCG:
+// const std::vector<long> params{ 2147483647L, 12001, 0L, 12345L } ;
+//
+// Medium LCG:
+// const std::vector<long> params{
+// 	72057594037927936L, 2147483647L, 1L, 12345L
+// } ;
+//
 
 /*
  *
