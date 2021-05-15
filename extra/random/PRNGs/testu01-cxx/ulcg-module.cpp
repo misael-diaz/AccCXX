@@ -133,6 +133,22 @@ void ulcg_implCheckLCG (const long& q, const long& r) ;
 void ulcg_implCheckLCG (const long& c, const long& q, const long& r) ;
 void ulcg_implCheckLCG (const std::vector<long>& Parameters) ;
 
+
+
+unif01_Gen* ulcg_createLCG (const std::vector<long>&) ;	// core
+unif01_Gen* ulcg_createLCG (LCG_param*, LCG_state*) ;	// distinctive
+unif01_Gen* ulcg_createLCG (unif01_Gen*) ;	// small LCGs
+
+
+unif01_Gen* ulcg_createLCG (unif01_Gen*, const long&, const long&,
+		            const long&) ; // selects Medium - Large LCGs
+
+
+unif01_Gen* ulcg_createLCG (unif01_Gen*, const long&) ; // Medium LCGs
+unif01_Gen* ulcg_createLCG (unif01_Gen*, const long&, const long&) ;// Larg
+
+
+
 void WrLCG (LCG_state *state) ;
 double SmallLCG_U01 (LCG_param *param, LCG_state *state) ;
 unsigned long SmallLCG_Bits (LCG_param *param, LCG_state *state) ;
@@ -141,50 +157,9 @@ unsigned long SmallLCG_Bits (LCG_param *param, LCG_state *state) ;
 // function definitions:
 unif01_Gen* ulcg::ulcg_CreateLCG (const std::vector<long>& Parameters) {
 	// creates a linear congruential generator
-        
-
-	unif01_Gen *gen  = NULL ;
-	LCG_param *param = NULL ;
-	LCG_state *state = NULL ;
-
 
 	ulcg_CheckLCG_Params(Parameters) ;	// validates input
-
-
-	// unpacks vector of parameters
-	const long& m = Parameters[0] ;	// modulus
-	const long& a = Parameters[1] ;	// constant
-	const long& c = Parameters[2] ;	// constant
-	const long& s = Parameters[3] ;	// seed
-
-	
-	gen = util::util_Malloc(gen) ;
-	param = util::util_Malloc(param) ;
-	state = util::util_Malloc(state) ;
-
-
-	param -> M = m ;
-	param -> A = a ;
-	param -> C = c ;
-	param -> q = m / a ;		// quotient
-	param -> r = m % a ;		// reminder
-	param -> Norm = 1.0 / m ;
-
-	state -> S = s ;
-
-
-	gen -> param   = param ;
-	gen -> state   = state ;
-	// TODO:
-	// set it up so that the "name" is determined at runtime
-	// use std::format string for the implementation
-	gen -> name    = std::string("SmallLCG_U01") ;
-	gen -> Write   = &WrLCG ;
-	gen -> GetU01  = &SmallLCG_U01 ;
-	gen -> GetBits = &SmallLCG_Bits ;
-
-
-        return gen ;
+	return ulcg_createLCG(Parameters) ;
 
 }
 
@@ -203,7 +178,7 @@ void ulcg_CheckLCG_Vector(const std::vector<long>& Parameters) {
 
 	if (Parameters.size() != 4) {
                 throw std::domain_error (
-                    "uclg_CreateLCG:    invalid vector"
+                    "ulcg_CreateLCG:    invalid vector"
                 ) ;
         }
 
@@ -232,6 +207,7 @@ void ulcg_CheckLCG_Values(const std::vector<long>& Parameters) {
 
 	}
 
+	// checks if the LCG's been implemented
 	ulcg_implCheckLCG(Parameters) ;
 
 }
@@ -303,6 +279,109 @@ void ulcg_implCheckLCG(const long& c) {
 	return ;
 
 }
+
+unif01_Gen* ulcg_createLCG (const std::vector<long>& Parameters) {
+        /* defines the "Core" characteristics of the LCG */
+
+	LCG_param *param = NULL ;
+	LCG_state *state = NULL ;
+
+	param = util::util_Malloc(param) ;
+	state = util::util_Malloc(state) ;
+
+	param -> M = Parameters[0] ;
+	param -> A = Parameters[1] ;
+	param -> C = Parameters[2] ;
+	state -> S = Parameters[3] ;		// state
+	param -> q = param -> M / param -> A ;	// quotient
+	param -> r = param -> M % param -> A ;	// reminder
+	param -> Norm = 1.0 / param -> M ;
+
+	return ulcg_createLCG (param, state) ;
+
+}
+
+
+unif01_Gen* ulcg_createLCG (LCG_param* param, LCG_state* state) {
+	/* defines the "Distinctive" characteristics */
+
+	unif01_Gen *gen = NULL ;
+	gen = util::util_Malloc(gen) ;
+
+	gen -> param   = param ;
+	gen -> state   = state ;
+
+	if (param -> M - 1 > (LONG_MAX - param -> C) / param -> A) {
+
+		return ulcg_createLCG (	// selects Medium - Large LCGs
+			gen, param -> C, param -> q, param -> r
+		) ;
+
+	} else {
+
+		return ulcg_createLCG (gen) ;	// Small LCGs
+
+	}
+
+}
+
+unif01_Gen* ulcg_createLCG (unif01_Gen* gen) {
+
+	gen -> name    = std::string("SmallLCG_U01") ;
+	gen -> Write   = &WrLCG ;
+	gen -> GetU01  = &SmallLCG_U01 ;
+	gen -> GetBits = &SmallLCG_Bits ;
+
+	return gen ;
+}
+
+unif01_Gen* ulcg_createLCG (unif01_Gen* gen, const long& c,
+			    const long& q,   const long& r) {
+
+	if (r > q) {
+
+		return ulcg_createLCG (gen, q, r) ;	// Large LCGs
+
+	} else {
+
+		return ulcg_createLCG (gen, c) ;	// Medium LCGs
+
+	}
+
+}
+
+unif01_Gen* ulcg_createLCG (unif01_Gen* gen, const long& q, const long& r)
+{
+
+	throw std::domain_error (
+		"ulcg_CreateLCG: Large LCGs are yet to be implemented"
+	) ;
+
+	return NULL ;
+
+}
+
+unif01_Gen* ulcg_createLCG (unif01_Gen* gen, const long& c) {
+
+
+	if (c != 0) {	// Medium LCGs
+
+		throw std::domain_error (
+		    "ulcg_CreateLCG: Medium LCGs are yet to be implemented"
+		) ;
+
+	} else {	// Medium MLCGs
+
+		throw std::domain_error (
+                    "ulcg_CreateLCG: Medium LCGs are yet to be implemented"
+		) ;
+
+	}
+
+	return NULL ;
+
+}
+
 
 void WrLCG (LCG_state *state) {	// writes state to the std ostream
 
