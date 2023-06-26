@@ -132,8 +132,6 @@ int main ()
     vec.push_back(i);
   }
 
-  list.print();
-
   LinkedList<int>::size_type const size = SIZE;
   assert(list.size() == size);
   std::cout << "test[1]: PASSED" << std::endl;
