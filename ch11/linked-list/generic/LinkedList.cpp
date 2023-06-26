@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cassert>
+#include <vector>
 
 #define SIZE 16
 
@@ -101,17 +102,34 @@ template<typename T> class LinkedList
       return this -> numel;
     }
 
+
+    T& operator[] (size_type pos)
+    {
+      size_type i = 0;
+      Node* node = head;
+      while (i != pos)
+      {
+	node = node -> next;
+	++i;
+      }
+
+      T& data = node -> data;
+      return data;
+    }
+
 };
 
 
 int main ()
 {
+  std::vector<int> vec;
   LinkedList<int> list;
   assert(list.size() == 0);
   std::cout << "test[0]: PASSED" << std::endl;
   for (int i = 0; i != SIZE; ++i)
   {
     list.insert(i);
+    vec.push_back(i);
   }
 
   list.print();
@@ -119,6 +137,12 @@ int main ()
   LinkedList<int>::size_type const size = SIZE;
   assert(list.size() == size);
   std::cout << "test[1]: PASSED" << std::endl;
+
+  for (LinkedList<int>::size_type i = 0; i != list.size(); ++i)
+  {
+    assert(list[i] == vec[i]);
+  }
+  std::cout << "test[2]: PASSED" << std::endl;
   return 0;
 }
 
