@@ -69,12 +69,11 @@ template<typename T> class LinkedList
 
     Node* head;
     Node* tail;
-    iterator iter;
     size_type numel;
 
   public:
 
-    LinkedList<T> () : head(NULL), tail(NULL), iter(NULL), numel(0) { }
+    LinkedList<T> () : head(NULL), tail(NULL), numel(0) { }
 
     ~LinkedList<T> ()
     {
@@ -159,17 +158,15 @@ template<typename T> class LinkedList
     }
 
 
-    iterator& begin ()
+    iterator begin ()
     {
-      iter = iterator(head);
-      return iter;
+      return iterator(head);
     }
 
 
-    iterator& end ()
+    iterator end ()
     {
-      iter = iterator(tail);
-      return iter;
+      return iterator(tail);
     }
 
 };
