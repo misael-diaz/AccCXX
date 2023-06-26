@@ -25,15 +25,56 @@ template<typename T> class LinkedList
 	}
     };
 
+
+    class Iterator
+    {
+      public:
+      Node* iter;
+
+      Iterator ()
+      {
+	this -> iter = NULL;
+      }
+
+      Iterator (Node* node)
+      {
+	this -> iter = node;
+      }
+
+      T& operator * ()
+      {
+	return this -> iter -> data;
+      }
+
+      void operator ++ ()
+      {
+	this -> iter = this -> iter -> next;
+      }
+
+      bool operator == (const Iterator& other) const
+      {
+	return (this -> iter == other.iter);
+      }
+
+      bool operator != (const Iterator& other) const
+      {
+	return (this -> iter != other.iter);
+      }
+
+    };
+
+    typedef Iterator iterator;
+
   private:
 
     Node* head;
     Node* tail;
+    iterator iter;
     size_type numel;
 
   public:
 
-    LinkedList<T> () : head(NULL), tail(NULL), numel(0) { }
+    LinkedList<T> () : head(NULL), tail(NULL), iter(NULL), numel(0) { }
 
     ~LinkedList<T> ()
     {
@@ -117,6 +158,20 @@ template<typename T> class LinkedList
       return data;
     }
 
+
+    iterator& begin ()
+    {
+      iter = iterator(head);
+      return iter;
+    }
+
+
+    iterator& end ()
+    {
+      iter = iterator(tail);
+      return iter;
+    }
+
 };
 
 
@@ -141,6 +196,27 @@ int main ()
     assert(list[i] == vec[i]);
   }
   std::cout << "test[2]: PASSED" << std::endl;
+
+  std::vector<int>::size_type i = 0;
+  for (LinkedList<int>::iterator it = list.begin(); it != list.end(); ++it)
+  {
+    assert(*it == vec[i]);
+    ++i;
+  }
+  std::cout << "test[3]: PASSED" << std::endl;
+
+  i = 0;
+  LinkedList<int>::iterator it = list.begin();
+  while ( it != list.end() )
+  {
+    assert(*it == vec[i]);
+    ++it;
+    ++i;
+  }
+  std::cout << "test[4]: PASSED" << std::endl;
+
+  assert( it == list.end() );
+  std::cout << "test[5]: PASSED" << std::endl;
   return 0;
 }
 
