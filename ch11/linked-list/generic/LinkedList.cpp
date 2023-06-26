@@ -1,122 +1,146 @@
 #include <iostream>
 #include <cassert>
+#include <vector>
 
 #define SIZE 16
 
 template<typename T> class LinkedList
 {
-  class Node
-  {
-    public:
+  public:
+    typedef std::size_t size_type;
 
-      T data;
-      Node* next;
+    class Node
+    {
+      public:
+	T data;
+	Node* next;
 
-      Node () : data(), next(NULL) { }
+	Node () : data(), next(NULL) { }
 
-      Node (const T& d) : data(d), next(NULL) { }
+	Node (const T& d) : data(d), next(NULL) { }
 
-      void print () const
-      {
-	std::cout << this -> data << std::endl;
-      }
-  };
+	void print () const
+	{
+	  std::cout << this -> data << std::endl;
+	}
+    };
 
   private:
 
-  Node* head;
-  Node* tail;
-  std::size_t numel;
+    Node* head;
+    Node* tail;
+    size_type numel;
 
   public:
 
-  LinkedList<T> () : head(NULL), tail(NULL), numel(0) { }
+    LinkedList<T> () : head(NULL), tail(NULL), numel(0) { }
 
-  ~LinkedList<T> ()
-  {
-    Node* node = this -> head;
-    if (head == NULL)
+    ~LinkedList<T> ()
     {
-      return;
-    }
+      Node* node = this -> head;
+      if (head == NULL)
+      {
+	return;
+      }
 
-    std::allocator<Node> alloc;
-    Node* next = node -> next;
-    alloc.deallocate(node, 1);
-
-    while (next != NULL)
-    {
-      node = next;
-      next = (node == NULL)? NULL : node -> next;
+      std::allocator<Node> alloc;
+      Node* next = node -> next;
       alloc.deallocate(node, 1);
+
+      while (next != NULL)
+      {
+	node = next;
+	next = (node == NULL)? NULL : node -> next;
+	alloc.deallocate(node, 1);
+      }
     }
-  }
 
 
-  void insert (T data)
-  {
-    std::allocator<Node> alloc;
-    if (head == NULL)
+    void insert (T data)
     {
-      head = alloc.allocate(1);
-      *head = Node(data);
-      head -> next = alloc.allocate(1);
-      Node* next = head -> next;
+      std::allocator<Node> alloc;
+      if (head == NULL)
+      {
+	head = alloc.allocate(1);
+	*head = Node(data);
+	head -> next = alloc.allocate(1);
+	Node* next = head -> next;
+	*next = Node();
+	tail = next;
+	++numel;
+	return;
+      }
+
+      *tail = Node(data);
+      tail -> next = alloc.allocate(1);
+      Node* next = tail -> next;
       *next = Node();
       tail = next;
       ++numel;
-      return;
     }
 
-    *tail = Node(data);
-    tail -> next = alloc.allocate(1);
-    Node* next = tail -> next;
-    *next = Node();
-    tail = next;
-    ++numel;
-  }
 
-
-  void print () const
-  {
-    Node* node = this -> head;
-
-    if (node == NULL)
+    void print () const
     {
-      std::cout << "LinkedList: empty" << std::endl;
-      return;
+      Node* node = this -> head;
+
+      if (node == NULL)
+      {
+	std::cout << "LinkedList: empty" << std::endl;
+	return;
+      }
+
+      while (node != tail)
+      {
+	node -> print();
+	node = node -> next;
+      }
     }
 
-    while (node != tail)
+    size_type size () const
     {
-      node -> print();
-      node = node -> next;
+      return this -> numel;
     }
-  }
 
-  std::size_t size () const
-  {
-    return this -> numel;
-  }
+
+    T& operator[] (size_type pos)
+    {
+      size_type i = 0;
+      Node* node = head;
+      while (i != pos)
+      {
+	node = node -> next;
+	++i;
+      }
+
+      T& data = node -> data;
+      return data;
+    }
 
 };
 
 
 int main ()
 {
+  std::vector<int> vec;
   LinkedList<int> list;
   assert(list.size() == 0);
   std::cout << "test[0]: PASSED" << std::endl;
   for (int i = 0; i != SIZE; ++i)
   {
     list.insert(i);
+    vec.push_back(i);
   }
 
-  list.print();
-
-  std::size_t const size = SIZE;
+  LinkedList<int>::size_type const size = SIZE;
   assert(list.size() == size);
   std::cout << "test[1]: PASSED" << std::endl;
+
+  for (LinkedList<int>::size_type i = 0; i != list.size(); ++i)
+  {
+    assert(list[i] == vec[i]);
+  }
+  std::cout << "test[2]: PASSED" << std::endl;
   return 0;
 }
 
