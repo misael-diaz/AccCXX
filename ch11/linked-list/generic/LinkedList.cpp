@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cassert>
 
 #define SIZE 16
 
@@ -25,10 +26,11 @@ template<typename T> class LinkedList
 
   Node* head;
   Node* tail;
+  std::size_t numel;
 
   public:
 
-  LinkedList<T> () : head(NULL), tail(NULL) { }
+  LinkedList<T> () : head(NULL), tail(NULL), numel(0) { }
 
   ~LinkedList<T> ()
   {
@@ -59,6 +61,7 @@ template<typename T> class LinkedList
       head = alloc.allocate(1);
       *head = Node(data);
       tail = head;
+      ++numel;
       return;
     }
 
@@ -66,6 +69,7 @@ template<typename T> class LinkedList
     Node* next = tail -> next;
     *next = Node(data);
     tail = next;
+    ++numel;
   }
 
 
@@ -90,18 +94,29 @@ template<typename T> class LinkedList
     node -> print();
   }
 
+  std::size_t size () const
+  {
+    return this -> numel;
+  }
+
 };
 
 
 int main ()
 {
   LinkedList<int> list;
+  assert(list.size() == 0);
+  std::cout << "test[0]: PASSED" << std::endl;
   for (int i = 0; i != SIZE; ++i)
   {
     list.insert(i);
   }
 
   list.print();
+
+  std::size_t const size = SIZE;
+  assert(list.size() == size);
+  std::cout << "test[1]: PASSED" << std::endl;
   return 0;
 }
 
