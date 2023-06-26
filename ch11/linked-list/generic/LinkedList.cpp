@@ -60,14 +60,18 @@ template<typename T> class LinkedList
     {
       head = alloc.allocate(1);
       *head = Node(data);
-      tail = head;
+      head -> next = alloc.allocate(1);
+      Node* next = head -> next;
+      *next = Node();
+      tail = next;
       ++numel;
       return;
     }
 
+    *tail = Node(data);
     tail -> next = alloc.allocate(1);
     Node* next = tail -> next;
-    *next = Node(data);
+    *next = Node();
     tail = next;
     ++numel;
   }
@@ -83,15 +87,11 @@ template<typename T> class LinkedList
       return;
     }
 
-    Node* next = node -> next;
-    while (next != NULL)
+    while (node != tail)
     {
       node -> print();
-      node = next;
-      next = (node == NULL)? NULL : node -> next;
+      node = node -> next;
     }
-
-    node -> print();
   }
 
   std::size_t size () const
