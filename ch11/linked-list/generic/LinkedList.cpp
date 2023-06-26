@@ -29,19 +29,19 @@ template<typename T> class LinkedList
     class Iterator
     {
       public:
-      Node* iter;
+      const Node* iter;
 
       Iterator ()
       {
 	this -> iter = NULL;
       }
 
-      Iterator (Node* node)
+      Iterator (const Node* node)
       {
 	this -> iter = node;
       }
 
-      T& operator * ()
+      const T& operator * () const
       {
 	return this -> iter -> data;
       }
@@ -63,7 +63,7 @@ template<typename T> class LinkedList
 
     };
 
-    typedef Iterator iterator;
+    typedef Iterator const_iterator;
 
   private:
 
@@ -158,15 +158,15 @@ template<typename T> class LinkedList
     }
 
 
-    iterator begin ()
+    const_iterator begin ()
     {
-      return iterator(head);
+      return const_iterator(head);
     }
 
 
-    iterator end ()
+    const_iterator end ()
     {
-      return iterator(tail);
+      return const_iterator(tail);
     }
 
 };
@@ -195,7 +195,7 @@ int main ()
   std::cout << "test[2]: PASSED" << std::endl;
 
   std::vector<int>::size_type i = 0;
-  for (LinkedList<int>::iterator it = list.begin(); it != list.end(); ++it)
+  for (LinkedList<int>::const_iterator it = list.begin(); it != list.end(); ++it)
   {
     assert(*it == vec[i]);
     ++i;
@@ -203,7 +203,7 @@ int main ()
   std::cout << "test[3]: PASSED" << std::endl;
 
   i = 0;
-  LinkedList<int>::iterator it = list.begin();
+  LinkedList<int>::const_iterator it = list.begin();
   while ( it != list.end() )
   {
     assert(*it == vec[i]);
