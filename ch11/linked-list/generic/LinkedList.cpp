@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <iostream>
 #include <cassert>
 #include <vector>
@@ -29,37 +30,54 @@ template<typename T> class LinkedList
     class Iterator
     {
       public:
-      const Node* iter;
+	// typedefs so that we can pass this iterator to STL algorithms, ref[2] and ref[3]
+	typedef std::input_iterator_tag iterator_category;
+	typedef std::ptrdiff_t difference_type;
+	typedef T value_type;
+	typedef T* pointer;
+	typedef T& reference;
 
-      Iterator ()
-      {
-	this -> iter = NULL;
-      }
+	struct iterator_traits
+	{
+	  typedef Iterator::iterator_category iterator_category;
+	  typedef Iterator::difference_type difference_type;
+	  typedef Iterator::value_type value_type;
+	  typedef Iterator::pointer pointer;
+	  typedef Iterator::reference reference;
+	};
 
-      Iterator (const Node* node)
-      {
-	this -> iter = node;
-      }
+	const Node* iter;
 
-      const T& operator * () const
-      {
-	return this -> iter -> data;
-      }
 
-      void operator ++ ()
-      {
-	this -> iter = this -> iter -> next;
-      }
+	Iterator ()
+	{
+	  this -> iter = NULL;
+	}
 
-      bool operator == (const Iterator& other) const
-      {
-	return (this -> iter == other.iter);
-      }
+	Iterator (const Node* node)
+	{
+	  this -> iter = node;
+	}
 
-      bool operator != (const Iterator& other) const
-      {
-	return (this -> iter != other.iter);
-      }
+	const T& operator * () const
+	{
+	  return this -> iter -> data;
+	}
+
+	void operator ++ ()
+	{
+	  this -> iter = this -> iter -> next;
+	}
+
+	bool operator == (const Iterator& other) const
+	{
+	  return (this -> iter == other.iter);
+	}
+
+	bool operator != (const Iterator& other) const
+	{
+	  return (this -> iter != other.iter);
+	}
 
     };
 
@@ -214,6 +232,22 @@ int main ()
 
   assert( it == list.end() );
   std::cout << "test[5]: PASSED" << std::endl;
+
+  for (int i = 0; i != SIZE; ++i)
+  {
+    LinkedList<int>::const_iterator iter = std::find(list.begin(), list.end(), i);
+    assert(*iter == i);
+  }
+  std::cout << "test[6]: PASSED" << std::endl;
+
+  int sum = 0;
+  for (const auto& elem : list)
+  {
+    sum += elem;
+  }
+  assert(sum == SIZE * (SIZE - 1) / 2);
+  std::cout << "test[7]: PASSED" << std::endl;
+
   return 0;
 }
 
@@ -236,5 +270,7 @@ by the Free Software Foundation, either version 3 of the License, or
 References:
 [0] A Koenig and B Moo, Accelerated C++ Practical Programming by Example
 [1] https://en.cppreference.com/w/cpp/memory/allocator
+[2] https://www.internalpointers.com/post/writing-custom-iterators-modern-cpp
+[3] https://en.cppreference.com/w/cpp/iterator/iterator_traits
 
 */
