@@ -79,6 +79,12 @@ template<typename T> class LinkedList
 	  return (this -> iter != other.iter);
 	}
 
+	const T* operator -> () const
+	{
+	  const T* ptr = &(this -> iter -> data);
+	  return ptr;
+	}
+
     };
 
     typedef Iterator const_iterator;
@@ -190,6 +196,21 @@ template<typename T> class LinkedList
 };
 
 
+struct Point
+{
+  int x;
+  int y;
+
+  Point () : x(0), y(0) { }
+
+  Point (int x, int y)
+  {
+   this -> x = x;
+   this -> y = y;
+  }
+};
+
+
 int main ()
 {
   std::vector<int> vec;
@@ -247,6 +268,29 @@ int main ()
   }
   assert(sum == SIZE * (SIZE - 1) / 2);
   std::cout << "test[7]: PASSED" << std::endl;
+
+  LinkedList<Point> points;
+  for (LinkedList<Point>::size_type i = 0; i != SIZE; ++i)
+  {
+    Point point(i, i);
+    points.insert(point);
+  }
+
+  sum = 0;
+  for (LinkedList<Point>::const_iterator it = points.begin(); it != points.end(); ++it)
+  {
+    sum += (it -> x);
+  }
+  assert(sum == SIZE * (SIZE - 1) / 2);
+  std::cout << "test[8]: PASSED" << std::endl;
+
+  sum = 0;
+  for (const auto& point : points)
+  {
+    sum += (point.x + point.y);
+  }
+  assert(sum == SIZE * (SIZE - 1));
+  std::cout << "test[9]: PASSED" << std::endl;
 
   return 0;
 }
