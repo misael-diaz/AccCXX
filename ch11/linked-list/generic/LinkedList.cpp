@@ -12,6 +12,7 @@ template<typename T> class LinkedList
     class Node
     {
       public:
+
 	T data;
 	Node* next;
 
@@ -28,6 +29,7 @@ template<typename T> class LinkedList
     class Iterator
     {
       public:
+
 	// typedefs so that we can pass this iterator to STL algorithms, ref[2] and ref[3]
 	typedef std::input_iterator_tag iterator_category;
 	typedef std::ptrdiff_t difference_type;
@@ -81,6 +83,7 @@ template<typename T> class LinkedList
 	}
 
       private:
+
 	const Node* iter;
     };
 
