@@ -28,9 +28,6 @@ template<typename T> class LinkedList
 
     class Iterator
     {
-      private:
-	const Node* iter;
-
       public:
 	// typedefs so that we can pass this iterator to STL algorithms, ref[2] and ref[3]
 	typedef std::input_iterator_tag iterator_category;
@@ -83,16 +80,14 @@ template<typename T> class LinkedList
 	  const T* ptr = &(this -> iter -> data);
 	  return ptr;
 	}
+
+      private:
+	const Node* iter;
     };
 
     typedef std::size_t size_type;
     typedef Iterator const_iterator;
 
-  private:
-
-    Node* head;
-    Node* tail;
-    size_type numel;
 
   public:
 
@@ -186,6 +181,12 @@ template<typename T> class LinkedList
     {
       return const_iterator(tail);
     }
+
+  private:
+
+    Node* head;
+    Node* tail;
+    size_type numel;
 };
 
 struct Point
