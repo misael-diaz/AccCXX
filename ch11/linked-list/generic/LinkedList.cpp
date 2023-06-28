@@ -118,7 +118,6 @@ template<typename T> class LinkedList
       }
     }
 
-
     void insert (const T& data)
     {
       std::allocator<Node> alloc;
@@ -142,7 +141,6 @@ template<typename T> class LinkedList
       ++numel;
     }
 
-
     void print () const
     {
       Node* node = this -> head;
@@ -165,7 +163,6 @@ template<typename T> class LinkedList
       return this -> numel;
     }
 
-
     T& operator[] (size_type pos)
     {
       size_type i = 0;
@@ -180,20 +177,16 @@ template<typename T> class LinkedList
       return data;
     }
 
-
     const_iterator begin ()
     {
       return const_iterator(head);
     }
 
-
     const_iterator end ()
     {
       return const_iterator(tail);
     }
-
 };
-
 
 struct Point
 {
@@ -208,7 +201,6 @@ struct Point
    this -> y = y;
   }
 };
-
 
 int main ()
 {
