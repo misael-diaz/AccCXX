@@ -119,7 +119,7 @@ template<typename T> class LinkedList
     }
 
 
-    void insert (T data)
+    void insert (const T& data)
     {
       std::allocator<Node> alloc;
       if (head == NULL)
