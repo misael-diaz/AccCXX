@@ -8,7 +8,6 @@
 template<typename T> class LinkedList
 {
   public:
-    typedef std::size_t size_type;
 
     class Node
     {
@@ -86,6 +85,7 @@ template<typename T> class LinkedList
 	}
     };
 
+    typedef std::size_t size_type;
     typedef Iterator const_iterator;
 
   private:
