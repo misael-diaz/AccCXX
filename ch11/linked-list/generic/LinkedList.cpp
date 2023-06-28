@@ -8,11 +8,11 @@
 template<typename T> class LinkedList
 {
   public:
-    typedef std::size_t size_type;
 
     class Node
     {
       public:
+
 	T data;
 	Node* next;
 
@@ -26,10 +26,10 @@ template<typename T> class LinkedList
 	}
     };
 
-
     class Iterator
     {
       public:
+
 	// typedefs so that we can pass this iterator to STL algorithms, ref[2] and ref[3]
 	typedef std::input_iterator_tag iterator_category;
 	typedef std::ptrdiff_t difference_type;
@@ -45,9 +45,6 @@ template<typename T> class LinkedList
 	  typedef Iterator::pointer pointer;
 	  typedef Iterator::reference reference;
 	};
-
-	const Node* iter;
-
 
 	Iterator ()
 	{
@@ -79,17 +76,19 @@ template<typename T> class LinkedList
 	  return (this -> iter != other.iter);
 	}
 
+	const T* operator -> () const
+	{
+	  const T* ptr = &(this -> iter -> data);
+	  return ptr;
+	}
+
+      private:
+
+	const Node* iter;
     };
 
+    typedef std::size_t size_type;
     typedef Iterator const_iterator;
-
-  private:
-
-    Node* head;
-    Node* tail;
-    size_type numel;
-
-  public:
 
     LinkedList<T> () : head(NULL), tail(NULL), numel(0) { }
 
@@ -113,8 +112,7 @@ template<typename T> class LinkedList
       }
     }
 
-
-    void insert (T data)
+    void insert (const T& data)
     {
       std::allocator<Node> alloc;
       if (head == NULL)
@@ -136,7 +134,6 @@ template<typename T> class LinkedList
       tail = next;
       ++numel;
     }
-
 
     void print () const
     {
@@ -160,7 +157,6 @@ template<typename T> class LinkedList
       return this -> numel;
     }
 
-
     T& operator[] (size_type pos)
     {
       size_type i = 0;
@@ -175,20 +171,36 @@ template<typename T> class LinkedList
       return data;
     }
 
-
     const_iterator begin ()
     {
       return const_iterator(head);
     }
-
 
     const_iterator end ()
     {
       return const_iterator(tail);
     }
 
+  private:
+
+    Node* head;
+    Node* tail;
+    size_type numel;
 };
 
+struct Point
+{
+  int x;
+  int y;
+
+  Point () : x(0), y(0) { }
+
+  Point (int x, int y)
+  {
+   this -> x = x;
+   this -> y = y;
+  }
+};
 
 int main ()
 {
@@ -247,6 +259,29 @@ int main ()
   }
   assert(sum == SIZE * (SIZE - 1) / 2);
   std::cout << "test[7]: PASSED" << std::endl;
+
+  LinkedList<Point> points;
+  for (LinkedList<Point>::size_type i = 0; i != SIZE; ++i)
+  {
+    Point point(i, i);
+    points.insert(point);
+  }
+
+  sum = 0;
+  for (LinkedList<Point>::const_iterator it = points.begin(); it != points.end(); ++it)
+  {
+    sum += (it -> x);
+  }
+  assert(sum == SIZE * (SIZE - 1) / 2);
+  std::cout << "test[8]: PASSED" << std::endl;
+
+  sum = 0;
+  for (const auto& point : points)
+  {
+    sum += (point.x + point.y);
+  }
+  assert(sum == SIZE * (SIZE - 1));
+  std::cout << "test[9]: PASSED" << std::endl;
 
   return 0;
 }
