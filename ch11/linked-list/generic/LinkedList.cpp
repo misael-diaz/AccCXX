@@ -29,6 +29,9 @@ template<typename T> class LinkedList
 
     class Iterator
     {
+      private:
+	const Node* iter;
+
       public:
 	// typedefs so that we can pass this iterator to STL algorithms, ref[2] and ref[3]
 	typedef std::input_iterator_tag iterator_category;
@@ -45,9 +48,6 @@ template<typename T> class LinkedList
 	  typedef Iterator::pointer pointer;
 	  typedef Iterator::reference reference;
 	};
-
-	const Node* iter;
-
 
 	Iterator ()
 	{
@@ -84,7 +84,6 @@ template<typename T> class LinkedList
 	  const T* ptr = &(this -> iter -> data);
 	  return ptr;
 	}
-
     };
 
     typedef Iterator const_iterator;
